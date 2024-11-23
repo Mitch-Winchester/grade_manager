@@ -1,0 +1,3 @@
+/Users/bruce/Documents/GitHub/qt_test/build/CMakeFiles/MyQtProject.dir
+/Users/bruce/Documents/GitHub/qt_test/build/CMakeFiles/edit_cache.dir
+/Users/bruce/Documents/GitHub/qt_test/build/CMakeFiles/rebuild_cache.dir
