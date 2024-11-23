@@ -300,6 +300,9 @@ Qt6OpenGLWidgets_DIR:PATH=/opt/homebrew/opt/qt/lib/cmake/Qt6OpenGLWidgets
 //The directory containing a CMake configuration file for Qt6OpenGL.
 Qt6OpenGL_DIR:PATH=/opt/homebrew/opt/qt/lib/cmake/Qt6OpenGL
 
+//The directory containing a CMake configuration file for Qt6Sql.
+Qt6Sql_DIR:PATH=/opt/homebrew/opt/qt/lib/cmake/Qt6Sql
+
 //The directory containing a CMake configuration file for Qt6UiPlugin.
 Qt6UiPlugin_DIR:PATH=/opt/homebrew/opt/qt/lib/cmake/Qt6UiPlugin
 
@@ -1030,6 +1033,8 @@ QT_FEATURE_splashscreen:INTERNAL=ON
 QT_FEATURE_splitter:INTERNAL=ON
 //Qt feature: sql (from target Qt6::Core)
 QT_FEATURE_sql:INTERNAL=ON
+//Qt feature: sqlmodel (from target Qt6::Sql)
+QT_FEATURE_sqlmodel:INTERNAL=ON
 //Qt feature: sse2 (from target Qt6::Core)
 QT_FEATURE_sse2:INTERNAL=OFF
 //Qt feature: sse3 (from target Qt6::Core)

@@ -33,13 +33,13 @@
 			"/opt/homebrew/opt/qt/lib/cmake/Qt6UiTools/Qt6UiToolsDependencies.cmake",
 			"/opt/homebrew/opt/qt/lib/cmake/Qt6Widgets/Qt6WidgetsTargets.cmake",
 			"/opt/homebrew/opt/qt/lib/cmake/Qt6Widgets/Qt6WidgetsConfig.cmake",
-			"/opt/homebrew/opt/qt/lib/cmake/Qt6Core/Qt6CoreTargets.cmake",
-			"/opt/homebrew/opt/qt/lib/cmake/Qt6Core/Qt6CoreConfig.cmake",
-			"/opt/homebrew/opt/qt/lib/cmake/Qt6Widgets/Qt6WidgetsDependencies.cmake",
 			"/opt/homebrew/Cellar/qt/6.7.2_2/lib/cmake/Qt6/FindWrapOpenGL.cmake",
 			"/opt/homebrew/opt/qt/lib/cmake/Qt6Gui/Qt6GuiDependencies.cmake",
 			"/opt/homebrew/opt/qt/lib/cmake/Qt6Gui/Qt6GuiConfig.cmake",
-			"/opt/homebrew/opt/qt/lib/cmake/Qt6Gui/Qt6GuiTargets.cmake"
+			"/opt/homebrew/opt/qt/lib/cmake/Qt6Widgets/Qt6WidgetsDependencies.cmake",
+			"/opt/homebrew/opt/qt/lib/cmake/Qt6Gui/Qt6GuiTargets.cmake",
+			"/opt/homebrew/opt/qt/lib/cmake/Qt6Core/Qt6CoreTargets.cmake",
+			"/opt/homebrew/opt/qt/lib/cmake/Qt6Core/Qt6CoreConfig.cmake"
 		],
 		"nodes" : 
 		[
@@ -175,12 +175,12 @@
 				"parent" : 20
 			},
 			{
-				"file" : 13,
+				"file" : 14,
 				"parent" : 24
 			},
 			{
 				"command" : 6,
-				"file" : 13,
+				"file" : 14,
 				"line" : 42,
 				"parent" : 25
 			},
@@ -197,24 +197,62 @@
 				"parent" : 27
 			},
 			{
-				"file" : 12,
+				"file" : 13,
 				"parent" : 28
 			},
 			{
 				"command" : 3,
-				"file" : 12,
-				"line" : 57,
+				"file" : 13,
+				"line" : 43,
 				"parent" : 29
 			},
 			{
-				"file" : 11,
+				"file" : 12,
 				"parent" : 30
 			},
 			{
-				"command" : 2,
-				"file" : 11,
-				"line" : 62,
+				"command" : 7,
+				"file" : 12,
+				"line" : 33,
 				"parent" : 31
+			},
+			{
+				"command" : 5,
+				"file" : 7,
+				"line" : 36,
+				"parent" : 32
+			},
+			{
+				"command" : 4,
+				"file" : 6,
+				"line" : 76,
+				"parent" : 33
+			},
+			{
+				"file" : 11,
+				"parent" : 34
+			},
+			{
+				"command" : 1,
+				"file" : 11,
+				"line" : 48,
+				"parent" : 35
+			},
+			{
+				"command" : 3,
+				"file" : 13,
+				"line" : 55,
+				"parent" : 29
+			},
+			{
+				"file" : 15,
+				"parent" : 37
+			},
+			{
+				"command" : 2,
+				"file" : 15,
+				"line" : 62,
+				"parent" : 38
 			},
 			{
 				"command" : 5,
@@ -226,63 +264,25 @@
 				"command" : 4,
 				"file" : 6,
 				"line" : 76,
-				"parent" : 33
-			},
-			{
-				"file" : 16,
-				"parent" : 34
-			},
-			{
-				"command" : 3,
-				"file" : 16,
-				"line" : 43,
-				"parent" : 35
-			},
-			{
-				"file" : 15,
-				"parent" : 36
-			},
-			{
-				"command" : 7,
-				"file" : 15,
-				"line" : 33,
-				"parent" : 37
-			},
-			{
-				"command" : 5,
-				"file" : 7,
-				"line" : 36,
-				"parent" : 38
-			},
-			{
-				"command" : 4,
-				"file" : 6,
-				"line" : 76,
-				"parent" : 39
-			},
-			{
-				"file" : 14,
 				"parent" : 40
 			},
 			{
-				"command" : 1,
-				"file" : 14,
-				"line" : 48,
+				"file" : 17,
 				"parent" : 41
 			},
 			{
 				"command" : 3,
-				"file" : 16,
-				"line" : 55,
-				"parent" : 35
+				"file" : 17,
+				"line" : 57,
+				"parent" : 42
 			},
 			{
-				"file" : 17,
+				"file" : 16,
 				"parent" : 43
 			},
 			{
 				"command" : 2,
-				"file" : 17,
+				"file" : 16,
 				"line" : 62,
 				"parent" : 44
 			},
@@ -320,6 +320,10 @@
 				{
 					"backtrace" : 2,
 					"define" : "QT_OPENGL_LIB"
+				},
+				{
+					"backtrace" : 2,
+					"define" : "QT_SQL_LIB"
 				},
 				{
 					"backtrace" : 2,
@@ -361,6 +365,11 @@
 					"backtrace" : 2,
 					"isSystem" : true,
 					"path" : "/opt/homebrew/opt/qt/lib/QtOpenGL.framework"
+				},
+				{
+					"backtrace" : 2,
+					"isSystem" : true,
+					"path" : "/opt/homebrew/opt/qt/lib/QtSql.framework"
 				}
 			],
 			"includes" : 
@@ -408,6 +417,11 @@
 					"backtrace" : 2,
 					"isSystem" : true,
 					"path" : "/opt/homebrew/opt/qt/lib/QtOpenGL.framework/Headers"
+				},
+				{
+					"backtrace" : 2,
+					"isSystem" : true,
+					"path" : "/opt/homebrew/opt/qt/lib/QtSql.framework/Headers"
 				}
 			],
 			"language" : "CXX",
@@ -452,6 +466,11 @@
 				"role" : "libraries"
 			},
 			{
+				"backtrace" : 2,
+				"fragment" : "/opt/homebrew/opt/qt/lib/QtSql.framework/Versions/A/QtSql",
+				"role" : "libraries"
+			},
+			{
 				"backtrace" : 9,
 				"fragment" : "/opt/homebrew/opt/qt/lib/QtOpenGLWidgets.framework/Versions/A/QtOpenGLWidgets",
 				"role" : "libraries"
@@ -472,22 +491,7 @@
 				"role" : "libraries"
 			},
 			{
-				"backtrace" : 23,
-				"fragment" : "/opt/homebrew/opt/qt/lib/QtCore.framework/Versions/A/QtCore",
-				"role" : "libraries"
-			},
-			{
-				"backtrace" : 32,
-				"fragment" : "-framework IOKit",
-				"role" : "libraries"
-			},
-			{
-				"backtrace" : 32,
-				"fragment" : "-framework DiskArbitration",
-				"role" : "libraries"
-			},
-			{
-				"backtrace" : 42,
+				"backtrace" : 36,
 				"fragment" : "-framework OpenGL",
 				"role" : "libraries"
 			},
@@ -496,18 +500,33 @@
 				"role" : "libraries"
 			},
 			{
-				"backtrace" : 45,
+				"backtrace" : 39,
 				"fragment" : "-framework AppKit",
 				"role" : "libraries"
 			},
 			{
-				"backtrace" : 45,
+				"backtrace" : 39,
 				"fragment" : "-framework ImageIO",
 				"role" : "libraries"
 			},
 			{
-				"backtrace" : 45,
+				"backtrace" : 39,
 				"fragment" : "-framework Metal",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 23,
+				"fragment" : "/opt/homebrew/opt/qt/lib/QtCore.framework/Versions/A/QtCore",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 45,
+				"fragment" : "-framework IOKit",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 45,
+				"fragment" : "-framework DiskArbitration",
 				"role" : "libraries"
 			}
 		],
