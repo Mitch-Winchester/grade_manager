@@ -49,7 +49,7 @@
     <item row="4" column="2">
      <widget class="QComboBox" name="prefixCombo">
       <property name="editable">
-       <bool>true</bool>
+       <bool>false</bool>
       </property>
      </widget>
     </item>
@@ -135,7 +135,7 @@
     <item row="5" column="2">
      <widget class="QComboBox" name="numberCombo">
       <property name="editable">
-       <bool>true</bool>
+       <bool>false</bool>
       </property>
      </widget>
     </item>
@@ -262,7 +262,7 @@
     <item row="3" column="2">
      <widget class="QComboBox" name="crnCombo">
       <property name="editable">
-       <bool>true</bool>
+       <bool>false</bool>
       </property>
      </widget>
     </item>
