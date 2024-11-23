@@ -1,14 +1,7 @@
 # ninja log v5
-9	609	1732379978719095199	CMakeFiles/MyQtProject.dir/src/main.cpp.o	efaa06bd99da17c8
-0	7	0	clean	44c112464faff946
-610	731	1732379978841744302	MyQtProject	f8c95710de5ab2b0
-11	582	1732380001155916765	CMakeFiles/MyQtProject.dir/src/main.cpp.o	efaa06bd99da17c8
-583	703	1732380001277496973	MyQtProject	f8c95710de5ab2b0
-10	614	1732380202363450573	CMakeFiles/MyQtProject.dir/src/main.cpp.o	efaa06bd99da17c8
-614	742	1732380202492623699	MyQtProject	f8c95710de5ab2b0
-11	617	1732380241989804998	CMakeFiles/MyQtProject.dir/src/main.cpp.o	efaa06bd99da17c8
-618	737	1732380242110529914	MyQtProject	f8c95710de5ab2b0
-12	613	1732380394111412325	CMakeFiles/MyQtProject.dir/src/main.cpp.o	efaa06bd99da17c8
-613	734	1732380394234236210	MyQtProject	f8c95710de5ab2b0
 10	596	1732381072058528726	CMakeFiles/MyQtProject.dir/src/main.cpp.o	efaa06bd99da17c8
+0	7	0	clean	44c112464faff946
 596	728	1732381072192196686	MyQtProject	f8c95710de5ab2b0
+0	6	0	clean	44c112464faff946
+9	665	1732381791180603015	CMakeFiles/MyQtProject.dir/src/main.cpp.o	17626ee56ed76d14
+665	807	1732381791324356555	MyQtProject	f8c95710de5ab2b0

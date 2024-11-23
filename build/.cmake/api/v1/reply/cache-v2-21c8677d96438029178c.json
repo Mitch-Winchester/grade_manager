@@ -55,7 +55,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/Users/bruce/Documents/GitHub/qt_test/build"
+			"value" : "/Users/bruce/Documents/GitHub/grade_manager_v2/build"
 		},
 		{
 			"name" : "CMAKE_CACHE_MAJOR_VERSION",
@@ -407,7 +407,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/Users/bruce/Documents/GitHub/qt_test/build/CMakeFiles/pkgRedirects"
+			"value" : "/Users/bruce/Documents/GitHub/grade_manager_v2/build/CMakeFiles/pkgRedirects"
 		},
 		{
 			"name" : "CMAKE_GENERATOR",
@@ -479,7 +479,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/Users/bruce/Documents/GitHub/qt_test"
+			"value" : "/Users/bruce/Documents/GitHub/grade_manager_v2"
 		},
 		{
 			"name" : "CMAKE_INSTALL_BINDIR",
@@ -1399,7 +1399,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/Users/bruce/Documents/GitHub/qt_test/build"
+			"value" : "/Users/bruce/Documents/GitHub/grade_manager_v2/build"
 		},
 		{
 			"name" : "MyQtProject_IS_TOP_LEVEL",
@@ -1423,7 +1423,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/Users/bruce/Documents/GitHub/qt_test"
+			"value" : "/Users/bruce/Documents/GitHub/grade_manager_v2"
 		},
 		{
 			"name" : "OPENGL_GLU_INCLUDE_DIR",
