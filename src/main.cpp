@@ -1,3 +1,5 @@
+#include "functions.h"
+
 #include <QApplication>
 #include <QWidget>
 #include <QPushButton>
@@ -6,68 +8,10 @@
 #include <QTableView>
 #include <QComboBox>
 
-#include <QtSql/QSqlQueryModel>
-#include <QSqlQuery>
-#include <QSqlError>
-
 #include <QIntValidator>
-#include <QDebug>
-
-#include "functions.h"
-
-void onSaveButtonClicked(QString studID, QWidget* addEditWindow, std::shared_ptr<QMap<std::string, QString>> selectedRow) {
-    // get combo boxes
-    QComboBox* gradeCombo = addEditWindow->findChild<QComboBox*>("gradeCombo");
-    QComboBox* crnCombo = addEditWindow->findChild<QComboBox*>("crnCombo");
-
-    // get values
-    int crn = QString(crnCombo->currentText()).toInt();
-    QString grade = QString(gradeCombo->currentText());
-
-    QSqlQuery gradeQuery;
-
-    // sql insert string
-    if (selectedRow->isEmpty()) {
-        gradeQuery.prepare("INSERT INTO grades (grade, student_id, crn) VALUES (:grade, :student_id, :crn)");
-        gradeQuery.bindValue(":grade", grade);
-        gradeQuery.bindValue(":student_id", studID);
-        gradeQuery.bindValue(":crn", crn);
-
-        gradeQuery.exec();
-    } else { // sql update string
-        gradeQuery.prepare("UPDATE grades SET grade=:grade WHERE student_id=:student_id AND crn=:crn");
-        gradeQuery.bindValue(":grade", grade);
-        gradeQuery.bindValue(":student_id", studID);
-        gradeQuery.bindValue(":crn", crn);
-
-        gradeQuery.exec();
-    }
-
-    // print for testing
-    qDebug() << " ID: " << studID << "CRN: " << crn << "Grade: " << grade;
-}
-
-void setComboBoxValues(QComboBox* crnCombo, QComboBox* prefixCombo, QComboBox* numberCombo, QSqlQuery coursesInfo) {
-    QList<QList<QString>> uniqueItems(3);
-
-    while (coursesInfo.next()) {
-        if (!uniqueItems[0].contains(coursesInfo.value("crn").toString())) {
-            uniqueItems[0].append(coursesInfo.value("crn").toString());
-            crnCombo->addItem(coursesInfo.value("crn").toString());
-        }
-        if (!uniqueItems[1].contains(coursesInfo.value("course_prefix").toString())) {
-            uniqueItems[1].append(coursesInfo.value("course_prefix").toString());
-            prefixCombo->addItem(coursesInfo.value("course_prefix").toString());
-        }
-        if (!uniqueItems[2].contains(coursesInfo.value("course_num").toString())) {
-            uniqueItems[2].append(coursesInfo.value("course_num").toString());
-            numberCombo->addItem(coursesInfo.value("course_num").toString());
-        }
-    }
-}
 
 // Function to create the add/edit window
-QWidget* createAddEditWindow(QSqlDatabase db, QString studID, std::shared_ptr<QMap<std::string, QString>> selectedRow) {
+QWidget* createAddEditWindow(QString studID, std::shared_ptr<QMap<std::string, QString>> selectedRow) {
     QWidget* addEditWindow = loadUiFile("../src/addEditWindow.ui");
     QList<QList<QString>> uniqueItems(3);
 
@@ -98,28 +42,15 @@ QWidget* createAddEditWindow(QSqlDatabase db, QString studID, std::shared_ptr<QM
     for (int i = current_year; i > current_year-10; i--) {
         yearCombo->addItem(QString::number(i));
     }
-    
+
+    // ensure db connection exists
+    QSqlDatabase db = databaseConnection();
     // set dynamic combo box values
     QString coursesQuery = QString("SELECT crn, course_prefix, course_num FROM courses");
     QSqlQuery coursesInfo = executeQuery(db, coursesQuery);
     
     setComboBoxValues(crnCombo, prefixCombo, numberCombo, std::move(coursesInfo));
-    /*
-    while (coursesInfo.next()) {
-        if (!uniqueItems[0].contains(coursesInfo.value("crn").toString())) {
-            uniqueItems[0].append(coursesInfo.value("crn").toString());
-            crnCombo->addItem(coursesInfo.value("crn").toString());
-        }
-        if (!uniqueItems[1].contains(coursesInfo.value("course_prefix").toString())) {
-            uniqueItems[1].append(coursesInfo.value("course_prefix").toString());
-            prefixCombo->addItem(coursesInfo.value("course_prefix").toString());
-        }
-        if (!uniqueItems[2].contains(coursesInfo.value("course_num").toString())) {
-            uniqueItems[2].append(coursesInfo.value("course_num").toString());
-            numberCombo->addItem(coursesInfo.value("course_num").toString());
-        }
-    }
-    */
+
     // set initial state of all combo boxes to no selection
     if (selectedRow->isEmpty()) {
         semesterCombo->setCurrentIndex(-1);
@@ -175,11 +106,12 @@ QWidget* createAddEditWindow(QSqlDatabase db, QString studID, std::shared_ptr<QM
 }
 
 // Function to create the grade window
-QWidget* createGradeWindow(QString studID, QSqlDatabase db) {
+QWidget* createGradeWindow(QString studID) {
     QWidget* gradeWindow = loadUiFile("../src/resultswindow.ui");
     std::shared_ptr<QMap<std::string, QString>> selectedRow = std::make_shared<QMap<std::string, QString>>();
 
-
+    // ensure db connection exists
+    QSqlDatabase db = databaseConnection();
     // get student name
     QString studentQuery = QString("SELECT * FROM students WHERE student_id LIKE '%%1%'").arg(studID);
     QSqlQuery nameResults = executeQuery(db, studentQuery);
@@ -225,7 +157,7 @@ QWidget* createGradeWindow(QString studID, QSqlDatabase db) {
     QPushButton* addEditButton = gradeWindow->findChild<QPushButton*>("addEditButton");
     QObject::connect(addEditButton, &QPushButton::clicked, gradeWindow, [db, studID, selectedRow](){
         // create addEditWindow
-        QWidget* addEditWindow = createAddEditWindow(db, studID, selectedRow);
+        QWidget* addEditWindow = createAddEditWindow(studID, selectedRow);
         
         addEditWindow->show();
     });
@@ -248,10 +180,11 @@ void onSearchButtonClicked(QWidget* mainWindow) {
         // validate student id
         QString studentQuery = QString("SELECT * FROM students WHERE student_id LIKE '%%1%'").arg(studID);
         QSqlQuery studentResults = executeQuery(db, studentQuery);
+        db.close();
 
         if (studentResults.next()) {
             // Create grade window
-            QWidget* gradeWindow = createGradeWindow(studID, db);
+            QWidget* gradeWindow = createGradeWindow(studID);
             gradeWindow->show();
         } else {
             qDebug() << "Invalid student id!";
@@ -259,11 +192,6 @@ void onSearchButtonClicked(QWidget* mainWindow) {
 
     }
     inputBox->setText("");
-}
-
-void importGrades() {
-    // ensure db connection exists
-    QSqlDatabase db = databaseConnection();
 }
 
 int main(int argc, char *argv[]) {

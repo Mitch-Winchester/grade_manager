@@ -1,0 +1,652 @@
+{
+	"artifacts" : 
+	[
+		{
+			"path" : "grade_manager"
+		}
+	],
+	"backtrace" : 1,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"add_executable",
+			"target_link_libraries",
+			"set_target_properties",
+			"include",
+			"find_package",
+			"find_dependency",
+			"_qt_internal_find_qt_dependencies",
+			"_qt_internal_find_third_party_dependencies",
+			"target_include_directories"
+		],
+		"files" : 
+		[
+			"CMakeLists.txt",
+			"/opt/homebrew/opt/qt/lib/cmake/Qt6UiTools/Qt6UiToolsTargets.cmake",
+			"/opt/homebrew/opt/qt/lib/cmake/Qt6UiTools/Qt6UiToolsConfig.cmake",
+			"/opt/homebrew/opt/qt/lib/cmake/Qt6/Qt6Config.cmake",
+			"/opt/homebrew/opt/qt/lib/cmake/Qt6OpenGLWidgets/Qt6OpenGLWidgetsTargets.cmake",
+			"/opt/homebrew/opt/qt/lib/cmake/Qt6OpenGLWidgets/Qt6OpenGLWidgetsConfig.cmake",
+			"/opt/homebrew/share/cmake/Modules/CMakeFindDependencyMacro.cmake",
+			"/opt/homebrew/Cellar/qt/6.7.2_2/lib/cmake/Qt6/QtPublicDependencyHelpers.cmake",
+			"/opt/homebrew/opt/qt/lib/cmake/Qt6UiTools/Qt6UiToolsDependencies.cmake",
+			"/opt/homebrew/opt/qt/lib/cmake/Qt6Widgets/Qt6WidgetsTargets.cmake",
+			"/opt/homebrew/opt/qt/lib/cmake/Qt6Widgets/Qt6WidgetsConfig.cmake",
+			"/opt/homebrew/Cellar/qt/6.7.2_2/lib/cmake/Qt6/FindWrapOpenGL.cmake",
+			"/opt/homebrew/opt/qt/lib/cmake/Qt6Gui/Qt6GuiDependencies.cmake",
+			"/opt/homebrew/opt/qt/lib/cmake/Qt6Gui/Qt6GuiConfig.cmake",
+			"/opt/homebrew/opt/qt/lib/cmake/Qt6Widgets/Qt6WidgetsDependencies.cmake",
+			"/opt/homebrew/opt/qt/lib/cmake/Qt6Gui/Qt6GuiTargets.cmake",
+			"/opt/homebrew/opt/qt/lib/cmake/Qt6Core/Qt6CoreTargets.cmake",
+			"/opt/homebrew/opt/qt/lib/cmake/Qt6Core/Qt6CoreConfig.cmake"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 20,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 25,
+				"parent" : 0
+			},
+			{
+				"command" : 4,
+				"file" : 0,
+				"line" : 8,
+				"parent" : 0
+			},
+			{
+				"file" : 3,
+				"parent" : 3
+			},
+			{
+				"command" : 4,
+				"file" : 3,
+				"line" : 169,
+				"parent" : 4
+			},
+			{
+				"file" : 2,
+				"parent" : 5
+			},
+			{
+				"command" : 3,
+				"file" : 2,
+				"line" : 55,
+				"parent" : 6
+			},
+			{
+				"file" : 1,
+				"parent" : 7
+			},
+			{
+				"command" : 2,
+				"file" : 1,
+				"line" : 62,
+				"parent" : 8
+			},
+			{
+				"command" : 3,
+				"file" : 2,
+				"line" : 43,
+				"parent" : 6
+			},
+			{
+				"file" : 8,
+				"parent" : 10
+			},
+			{
+				"command" : 6,
+				"file" : 8,
+				"line" : 42,
+				"parent" : 11
+			},
+			{
+				"command" : 5,
+				"file" : 7,
+				"line" : 111,
+				"parent" : 12
+			},
+			{
+				"command" : 4,
+				"file" : 6,
+				"line" : 76,
+				"parent" : 13
+			},
+			{
+				"file" : 5,
+				"parent" : 14
+			},
+			{
+				"command" : 3,
+				"file" : 5,
+				"line" : 55,
+				"parent" : 15
+			},
+			{
+				"file" : 4,
+				"parent" : 16
+			},
+			{
+				"command" : 2,
+				"file" : 4,
+				"line" : 62,
+				"parent" : 17
+			},
+			{
+				"command" : 4,
+				"file" : 3,
+				"line" : 169,
+				"parent" : 4
+			},
+			{
+				"file" : 10,
+				"parent" : 19
+			},
+			{
+				"command" : 3,
+				"file" : 10,
+				"line" : 55,
+				"parent" : 20
+			},
+			{
+				"file" : 9,
+				"parent" : 21
+			},
+			{
+				"command" : 2,
+				"file" : 9,
+				"line" : 62,
+				"parent" : 22
+			},
+			{
+				"command" : 3,
+				"file" : 10,
+				"line" : 43,
+				"parent" : 20
+			},
+			{
+				"file" : 14,
+				"parent" : 24
+			},
+			{
+				"command" : 6,
+				"file" : 14,
+				"line" : 42,
+				"parent" : 25
+			},
+			{
+				"command" : 5,
+				"file" : 7,
+				"line" : 111,
+				"parent" : 26
+			},
+			{
+				"command" : 4,
+				"file" : 6,
+				"line" : 76,
+				"parent" : 27
+			},
+			{
+				"file" : 13,
+				"parent" : 28
+			},
+			{
+				"command" : 3,
+				"file" : 13,
+				"line" : 43,
+				"parent" : 29
+			},
+			{
+				"file" : 12,
+				"parent" : 30
+			},
+			{
+				"command" : 7,
+				"file" : 12,
+				"line" : 33,
+				"parent" : 31
+			},
+			{
+				"command" : 5,
+				"file" : 7,
+				"line" : 36,
+				"parent" : 32
+			},
+			{
+				"command" : 4,
+				"file" : 6,
+				"line" : 76,
+				"parent" : 33
+			},
+			{
+				"file" : 11,
+				"parent" : 34
+			},
+			{
+				"command" : 1,
+				"file" : 11,
+				"line" : 48,
+				"parent" : 35
+			},
+			{
+				"command" : 3,
+				"file" : 13,
+				"line" : 55,
+				"parent" : 29
+			},
+			{
+				"file" : 15,
+				"parent" : 37
+			},
+			{
+				"command" : 2,
+				"file" : 15,
+				"line" : 62,
+				"parent" : 38
+			},
+			{
+				"command" : 5,
+				"file" : 7,
+				"line" : 111,
+				"parent" : 26
+			},
+			{
+				"command" : 4,
+				"file" : 6,
+				"line" : 76,
+				"parent" : 40
+			},
+			{
+				"file" : 17,
+				"parent" : 41
+			},
+			{
+				"command" : 3,
+				"file" : 17,
+				"line" : 57,
+				"parent" : 42
+			},
+			{
+				"file" : 16,
+				"parent" : 43
+			},
+			{
+				"command" : 2,
+				"file" : 16,
+				"line" : 62,
+				"parent" : 44
+			},
+			{
+				"command" : 8,
+				"file" : 0,
+				"line" : 28,
+				"parent" : 0
+			}
+		]
+	},
+	"compileGroups" : 
+	[
+		{
+			"compileCommandFragments" : 
+			[
+				{
+					"fragment" : "-g -std=gnu++17 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.3.sdk"
+				}
+			],
+			"defines" : 
+			[
+				{
+					"backtrace" : 2,
+					"define" : "QT_CORE_LIB"
+				},
+				{
+					"backtrace" : 2,
+					"define" : "QT_GUI_LIB"
+				},
+				{
+					"backtrace" : 2,
+					"define" : "QT_OPENGLWIDGETS_LIB"
+				},
+				{
+					"backtrace" : 2,
+					"define" : "QT_OPENGL_LIB"
+				},
+				{
+					"backtrace" : 2,
+					"define" : "QT_SQL_LIB"
+				},
+				{
+					"backtrace" : 2,
+					"define" : "QT_UITOOLS_LIB"
+				},
+				{
+					"backtrace" : 2,
+					"define" : "QT_WIDGETS_LIB"
+				}
+			],
+			"frameworks" : 
+			[
+				{
+					"backtrace" : 2,
+					"isSystem" : true,
+					"path" : "/opt/homebrew/opt/qt/lib/QtWidgets.framework"
+				},
+				{
+					"backtrace" : 2,
+					"isSystem" : true,
+					"path" : "/opt/homebrew/opt/qt/lib/QtCore.framework"
+				},
+				{
+					"backtrace" : 2,
+					"isSystem" : true,
+					"path" : "/opt/homebrew/opt/qt/lib/QtGui.framework"
+				},
+				{
+					"backtrace" : 2,
+					"isSystem" : true,
+					"path" : "/opt/homebrew/opt/qt/lib/QtUiTools.framework"
+				},
+				{
+					"backtrace" : 2,
+					"isSystem" : true,
+					"path" : "/opt/homebrew/opt/qt/lib/QtOpenGLWidgets.framework"
+				},
+				{
+					"backtrace" : 2,
+					"isSystem" : true,
+					"path" : "/opt/homebrew/opt/qt/lib/QtOpenGL.framework"
+				},
+				{
+					"backtrace" : 2,
+					"isSystem" : true,
+					"path" : "/opt/homebrew/opt/qt/lib/QtSql.framework"
+				}
+			],
+			"includes" : 
+			[
+				{
+					"backtrace" : 46,
+					"path" : "/Users/bruce/Documents/GitHub/grade_manager_v2/include"
+				},
+				{
+					"backtrace" : 2,
+					"path" : "/Users/bruce/Documents/GitHub/grade_manager_v2/third_party/QXlsx/header"
+				},
+				{
+					"backtrace" : 2,
+					"isSystem" : true,
+					"path" : "/opt/homebrew/opt/qt/lib/QtWidgets.framework/Headers"
+				},
+				{
+					"backtrace" : 2,
+					"isSystem" : true,
+					"path" : "/opt/homebrew/opt/qt/lib/QtCore.framework/Headers"
+				},
+				{
+					"backtrace" : 2,
+					"isSystem" : true,
+					"path" : "/opt/homebrew/opt/qt/share/qt/mkspecs/macx-clang"
+				},
+				{
+					"backtrace" : 2,
+					"isSystem" : true,
+					"path" : "/opt/homebrew/opt/qt/include"
+				},
+				{
+					"backtrace" : 2,
+					"isSystem" : true,
+					"path" : "/opt/homebrew/opt/qt/lib/QtGui.framework/Headers"
+				},
+				{
+					"backtrace" : 2,
+					"isSystem" : true,
+					"path" : "/opt/homebrew/opt/qt/lib/QtUiTools.framework/Headers"
+				},
+				{
+					"backtrace" : 2,
+					"isSystem" : true,
+					"path" : "/opt/homebrew/opt/qt/lib/QtOpenGLWidgets.framework/Headers"
+				},
+				{
+					"backtrace" : 2,
+					"isSystem" : true,
+					"path" : "/opt/homebrew/opt/qt/lib/QtOpenGL.framework/Headers"
+				},
+				{
+					"backtrace" : 2,
+					"isSystem" : true,
+					"path" : "/opt/homebrew/opt/qt/lib/QtSql.framework/Headers"
+				},
+				{
+					"backtrace" : 2,
+					"isSystem" : true,
+					"path" : "/opt/homebrew/opt/qt/lib/QtGui.framework/Versions/A/Headers/6.7.2"
+				},
+				{
+					"backtrace" : 2,
+					"isSystem" : true,
+					"path" : "/opt/homebrew/opt/qt/lib/QtGui.framework/Versions/A/Headers/6.7.2/QtGui"
+				},
+				{
+					"backtrace" : 2,
+					"isSystem" : true,
+					"path" : "/opt/homebrew/opt/qt/lib/QtCore.framework/Versions/A/Headers/6.7.2"
+				},
+				{
+					"backtrace" : 2,
+					"isSystem" : true,
+					"path" : "/opt/homebrew/opt/qt/lib/QtCore.framework/Versions/A/Headers/6.7.2/QtCore"
+				}
+			],
+			"language" : "CXX",
+			"languageStandard" : 
+			{
+				"backtraces" : 
+				[
+					2,
+					2,
+					2
+				],
+				"standard" : "17"
+			},
+			"sourceIndexes" : 
+			[
+				0,
+				1,
+				3
+			]
+		}
+	],
+	"dependencies" : 
+	[
+		{
+			"backtrace" : 2,
+			"id" : "QXlsx::@b8b86da614f3ef0e2da9"
+		}
+	],
+	"id" : "grade_manager::@6890427a1f51a3e7e1df",
+	"link" : 
+	{
+		"commandFragments" : 
+		[
+			{
+				"fragment" : "-g",
+				"role" : "flags"
+			},
+			{
+				"fragment" : "",
+				"role" : "flags"
+			},
+			{
+				"fragment" : "-F/opt/homebrew/opt/qt/lib",
+				"role" : "frameworkPath"
+			},
+			{
+				"fragment" : "-Wl,-rpath,/opt/homebrew/opt/qt/lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "/opt/homebrew/opt/qt/lib/QtUiTools.framework/Versions/A/QtUiTools",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "/opt/homebrew/opt/qt/lib/QtSql.framework/Versions/A/QtSql",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "third_party/QXlsx/libQXlsxQt6.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 9,
+				"fragment" : "/opt/homebrew/opt/qt/lib/QtOpenGLWidgets.framework/Versions/A/QtOpenGLWidgets",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "/opt/homebrew/opt/qt/lib/QtWidgets.framework/Versions/A/QtWidgets",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 18,
+				"fragment" : "/opt/homebrew/opt/qt/lib/QtOpenGL.framework/Versions/A/QtOpenGL",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 23,
+				"fragment" : "/opt/homebrew/opt/qt/lib/QtGui.framework/Versions/A/QtGui",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 36,
+				"fragment" : "-framework OpenGL",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "-framework AGL",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 39,
+				"fragment" : "-framework AppKit",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 39,
+				"fragment" : "-framework ImageIO",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 39,
+				"fragment" : "-framework Metal",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 23,
+				"fragment" : "/opt/homebrew/opt/qt/lib/QtCore.framework/Versions/A/QtCore",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 45,
+				"fragment" : "-framework IOKit",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 45,
+				"fragment" : "-framework DiskArbitration",
+				"role" : "libraries"
+			}
+		],
+		"language" : "CXX"
+	},
+	"name" : "grade_manager",
+	"nameOnDisk" : "grade_manager",
+	"paths" : 
+	{
+		"build" : ".",
+		"source" : "."
+	},
+	"sourceGroups" : 
+	[
+		{
+			"name" : "Source Files",
+			"sourceIndexes" : 
+			[
+				0,
+				1,
+				3
+			]
+		},
+		{
+			"name" : "Header Files",
+			"sourceIndexes" : 
+			[
+				2
+			]
+		},
+		{
+			"name" : "",
+			"sourceIndexes" : 
+			[
+				4,
+				5,
+				6
+			]
+		}
+	],
+	"sources" : 
+	[
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "src/main.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "src/functions.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "src/functions.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "src/importFiles.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "src/mainwindow.ui",
+			"sourceGroupIndex" : 2
+		},
+		{
+			"backtrace" : 1,
+			"path" : "src/resultswindow.ui",
+			"sourceGroupIndex" : 2
+		},
+		{
+			"backtrace" : 1,
+			"path" : "src/addeditwindow.ui",
+			"sourceGroupIndex" : 2
+		}
+	],
+	"type" : "EXECUTABLE"
+}

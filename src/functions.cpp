@@ -2,13 +2,7 @@
 
 #include <QFile>
 #include <QUiLoader>
-#include <QString>
-#include <QSqlDatabase>
-#include <QSqlError>
-#include <QSqlQuery>
 #include <QSettings>
-#include <QSqlQueryModel>
-#include <QItemSelection>
 
 // Function to load .ui files
 QWidget* loadUiFile(const QString& filePath) {
@@ -117,4 +111,55 @@ QMap<std::string, QString> onSelectionChanged(QSqlQueryModel* model, const QItem
     }
 
     return selectedRow;
+}
+
+void onSaveButtonClicked(QString studID, QWidget* addEditWindow, std::shared_ptr<QMap<std::string, QString>> selectedRow) {
+    // get combo boxes
+    QComboBox* gradeCombo = addEditWindow->findChild<QComboBox*>("gradeCombo");
+    QComboBox* crnCombo = addEditWindow->findChild<QComboBox*>("crnCombo");
+
+    // get values
+    int crn = QString(crnCombo->currentText()).toInt();
+    QString grade = QString(gradeCombo->currentText());
+
+    QSqlQuery gradeQuery;
+
+    // sql insert string
+    if (selectedRow->isEmpty()) {
+        gradeQuery.prepare("INSERT INTO grades (grade, student_id, crn) VALUES (:grade, :student_id, :crn)");
+        gradeQuery.bindValue(":grade", grade);
+        gradeQuery.bindValue(":student_id", studID);
+        gradeQuery.bindValue(":crn", crn);
+
+        gradeQuery.exec();
+    } else { // sql update string
+        gradeQuery.prepare("UPDATE grades SET grade=:grade WHERE student_id=:student_id AND crn=:crn");
+        gradeQuery.bindValue(":grade", grade);
+        gradeQuery.bindValue(":student_id", studID);
+        gradeQuery.bindValue(":crn", crn);
+
+        gradeQuery.exec();
+    }
+
+    // print for testing
+    qDebug() << " ID: " << studID << "CRN: " << crn << "Grade: " << grade;
+}
+
+void setComboBoxValues(QComboBox* crnCombo, QComboBox* prefixCombo, QComboBox* numberCombo, QSqlQuery coursesInfo) {
+    QList<QList<QString>> uniqueItems(3);
+
+    while (coursesInfo.next()) {
+        if (!uniqueItems[0].contains(coursesInfo.value("crn").toString())) {
+            uniqueItems[0].append(coursesInfo.value("crn").toString());
+            crnCombo->addItem(coursesInfo.value("crn").toString());
+        }
+        if (!uniqueItems[1].contains(coursesInfo.value("course_prefix").toString())) {
+            uniqueItems[1].append(coursesInfo.value("course_prefix").toString());
+            prefixCombo->addItem(coursesInfo.value("course_prefix").toString());
+        }
+        if (!uniqueItems[2].contains(coursesInfo.value("course_num").toString())) {
+            uniqueItems[2].append(coursesInfo.value("course_num").toString());
+            numberCombo->addItem(coursesInfo.value("course_num").toString());
+        }
+    }
 }

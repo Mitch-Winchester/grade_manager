@@ -11,10 +11,10 @@ set(PROJECT_SOURCES
     src/main.cpp
     src/functions.cpp
     src/functions.h
+    src/importFiles.cpp
     src/mainwindow.ui
     src/resultswindow.ui
     src/addeditwindow.ui
-    test.cpp
 )
 
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCES})
