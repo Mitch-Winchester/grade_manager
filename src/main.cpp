@@ -115,9 +115,10 @@ QWidget* createGradeWindow(QString studID) {
     // get student name
     QString studentQuery = QString("SELECT * FROM students WHERE student_id LIKE '%%1%'").arg(studID);
     QSqlQuery nameResults = executeQuery(db, studentQuery);
+    QString fullName;
 
     while (nameResults.next()) {
-        QString fullName = nameResults.value("first_name").toString() + " " + nameResults.value("last_name").toString();
+        fullName = nameResults.value("first_name").toString() + " " + nameResults.value("last_name").toString();
 
         // get and set displayName label
         QLabel* displayName = gradeWindow->findChild<QLabel*>("displayName");
@@ -140,7 +141,7 @@ QWidget* createGradeWindow(QString studID) {
     if (model->lastError().isValid()) {
         qDebug() << "Model error: " << model->lastError().text();
     }
-    
+    db.close();
     // connect model to table
     QTableView* gradeTable = gradeWindow->findChild<QTableView*>("gradeTable");
     gradeTable->setModel(model);
@@ -160,6 +161,12 @@ QWidget* createGradeWindow(QString studID) {
         QWidget* addEditWindow = createAddEditWindow(studID, selectedRow);
         
         addEditWindow->show();
+    });
+
+    // get and connect print button
+    QPushButton* printButton = gradeWindow->findChild<QPushButton*>("printButton");
+    QObject::connect(printButton, &QPushButton::clicked, gradeWindow, [studID, fullName, cumGpa](){
+        printTranscript(studID, fullName, cumGpa);
     });
 
     // get and connect close button

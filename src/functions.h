@@ -19,5 +19,6 @@ QMap<std::string, QString> onSelectionChanged(QSqlQueryModel* model, const QItem
 void onSaveButtonClicked(QString studID, QWidget* addEditWindow, std::shared_ptr<QMap<std::string, QString>> selectedRow);
 void setComboBoxValues(QComboBox* crnCombo, QComboBox* prefixCombo, QComboBox* numberCombo, QSqlQuery coursesInfo);
 void importGrades();
+void printTranscript(QString studID, QString , QString cumGpa);
 
 #endif
