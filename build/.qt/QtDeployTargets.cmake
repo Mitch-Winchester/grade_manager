@@ -1,2 +1,4 @@
+set(__QT_DEPLOY_TARGET_QXlsx_FILE /Users/bruce/Documents/GitHub/grade_manager_v2/build/third_party/QXlsx/libQXlsxQt6.a)
+set(__QT_DEPLOY_TARGET_QXlsx_TYPE STATIC_LIBRARY)
 set(__QT_DEPLOY_TARGET_grade_manager_FILE /Users/bruce/Documents/GitHub/grade_manager_v2/build/grade_manager)
 set(__QT_DEPLOY_TARGET_grade_manager_TYPE EXECUTABLE)

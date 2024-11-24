@@ -14,12 +14,15 @@ set(PROJECT_SOURCES
     src/mainwindow.ui
     src/resultswindow.ui
     src/addeditwindow.ui
+    test.cpp
 )
 
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCES})
 
+add_subdirectory(third_party/QXlsx)
+
 # Link Qt libraries
-target_link_libraries(${PROJECT_NAME} PRIVATE Qt6::Widgets Qt6::UiTools Qt6::Sql)
+target_link_libraries(${PROJECT_NAME} PRIVATE Qt6::Widgets Qt6::UiTools Qt6::Sql QXlsx)
 
 # Include directories
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)

@@ -3,6 +3,8 @@
 
 #include <QString>
 #include <QSqlQuery>
+#include <QSqlQueryModel>
+#include <QItemSelection>
 
 QSqlDatabase databaseConnection();
 QWidget* loadUiFile(const QString& filePath);

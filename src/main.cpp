@@ -244,13 +244,26 @@ void onSearchButtonClicked(QWidget* mainWindow) {
 
     // ensure db connection exists
     QSqlDatabase db = databaseConnection();
-    if (db.isValid()) {
-        // Create grade window
-        QWidget* gradeWindow = createGradeWindow(studID, db);
-        
-        gradeWindow->show();
+    if (db.isValid() && studID != "") {
+        // validate student id
+        QString studentQuery = QString("SELECT * FROM students WHERE student_id LIKE '%%1%'").arg(studID);
+        QSqlQuery studentResults = executeQuery(db, studentQuery);
+
+        if (studentResults.next()) {
+            // Create grade window
+            QWidget* gradeWindow = createGradeWindow(studID, db);
+            gradeWindow->show();
+        } else {
+            qDebug() << "Invalid student id!";
+        }
+
     }
     inputBox->setText("");
+}
+
+void importGrades() {
+    // ensure db connection exists
+    QSqlDatabase db = databaseConnection();
 }
 
 int main(int argc, char *argv[]) {
@@ -259,11 +272,16 @@ int main(int argc, char *argv[]) {
     // Load the main window
     QWidget* mainWindow = loadUiFile("../src/mainwindow.ui");
 
-    // get input box and search button
+    // get and connect search button
     QPushButton* searchButton = mainWindow->findChild<QPushButton*>("searchButton");
-
     QObject::connect(searchButton, &QPushButton::clicked, mainWindow, [mainWindow](){
         onSearchButtonClicked(mainWindow);
+    });
+
+    // get and connect import button
+    QPushButton* importButton = mainWindow->findChild<QPushButton*>("importButton");
+    QObject::connect(importButton, &QPushButton::clicked, mainWindow, [mainWindow](){
+        importGrades();
     });
 
     // Show the main window
