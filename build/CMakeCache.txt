@@ -178,7 +178,7 @@ CMAKE_PROJECT_DESCRIPTION:STATIC=
 CMAKE_PROJECT_HOMEPAGE_URL:STATIC=
 
 //Value Computed by CMake
-CMAKE_PROJECT_NAME:STATIC=MyQtProject
+CMAKE_PROJECT_NAME:STATIC=grade_manager
 
 //Path to a program.
 CMAKE_RANLIB:FILEPATH=/usr/bin/ranlib
@@ -332,6 +332,15 @@ Vulkan_LIBRARY:FILEPATH=Vulkan_LIBRARY-NOTFOUND
 
 //Path to a library.
 WrapOpenGL_AGL:FILEPATH=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.3.sdk/System/Library/Frameworks/AGL.framework
+
+//Value Computed by CMake
+grade_manager_BINARY_DIR:STATIC=/Users/bruce/Documents/GitHub/grade_manager_v2/build
+
+//Value Computed by CMake
+grade_manager_IS_TOP_LEVEL:STATIC=ON
+
+//Value Computed by CMake
+grade_manager_SOURCE_DIR:STATIC=/Users/bruce/Documents/GitHub/grade_manager_v2
 
 
 ########################

@@ -1,2 +1,2 @@
-set(__QT_DEPLOY_TARGET_MyQtProject_FILE /Users/bruce/Documents/GitHub/grade_manager_v2/build/MyQtProject)
-set(__QT_DEPLOY_TARGET_MyQtProject_TYPE EXECUTABLE)
+set(__QT_DEPLOY_TARGET_grade_manager_FILE /Users/bruce/Documents/GitHub/grade_manager_v2/build/grade_manager)
+set(__QT_DEPLOY_TARGET_grade_manager_TYPE EXECUTABLE)

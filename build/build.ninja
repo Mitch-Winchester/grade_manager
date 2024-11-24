@@ -11,7 +11,7 @@
 # =============================================================================
 
 # =============================================================================
-# Project: MyQtProject
+# Project: grade_manager
 # Configurations: Debug
 # =============================================================================
 
@@ -41,39 +41,47 @@ include CMakeFiles/rules.ninja
 
 cmake_ninja_workdir = /Users/bruce/Documents/GitHub/grade_manager_v2/build/
 # =============================================================================
-# Object build statements for EXECUTABLE target MyQtProject
+# Object build statements for EXECUTABLE target grade_manager
 
 
 #############################################
-# Order-only phony target for MyQtProject
+# Order-only phony target for grade_manager
 
-build cmake_object_order_depends_target_MyQtProject: phony || .
+build cmake_object_order_depends_target_grade_manager: phony || .
 
-build CMakeFiles/MyQtProject.dir/src/main.cpp.o: CXX_COMPILER__MyQtProject_unscanned_Debug /Users/bruce/Documents/GitHub/grade_manager_v2/src/main.cpp || cmake_object_order_depends_target_MyQtProject
+build CMakeFiles/grade_manager.dir/src/main.cpp.o: CXX_COMPILER__grade_manager_unscanned_Debug /Users/bruce/Documents/GitHub/grade_manager_v2/src/main.cpp || cmake_object_order_depends_target_grade_manager
   DEFINES = -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGLWIDGETS_LIB -DQT_OPENGL_LIB -DQT_SQL_LIB -DQT_UITOOLS_LIB -DQT_WIDGETS_LIB
-  DEP_FILE = CMakeFiles/MyQtProject.dir/src/main.cpp.o.d
+  DEP_FILE = CMakeFiles/grade_manager.dir/src/main.cpp.o.d
   FLAGS = -g -std=gnu++17 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.3.sdk
   INCLUDES = -I/Users/bruce/Documents/GitHub/grade_manager_v2/include -isystem /opt/homebrew/opt/qt/lib/QtWidgets.framework/Headers -iframework /opt/homebrew/opt/qt/lib -isystem /opt/homebrew/opt/qt/lib/QtCore.framework/Headers -isystem /opt/homebrew/opt/qt/share/qt/mkspecs/macx-clang -isystem /opt/homebrew/opt/qt/include -isystem /opt/homebrew/opt/qt/lib/QtGui.framework/Headers -isystem /opt/homebrew/opt/qt/lib/QtUiTools.framework/Headers -isystem /opt/homebrew/opt/qt/lib/QtOpenGLWidgets.framework/Headers -isystem /opt/homebrew/opt/qt/lib/QtOpenGL.framework/Headers -isystem /opt/homebrew/opt/qt/lib/QtSql.framework/Headers
-  OBJECT_DIR = CMakeFiles/MyQtProject.dir
-  OBJECT_FILE_DIR = CMakeFiles/MyQtProject.dir/src
+  OBJECT_DIR = CMakeFiles/grade_manager.dir
+  OBJECT_FILE_DIR = CMakeFiles/grade_manager.dir/src
+
+build CMakeFiles/grade_manager.dir/src/functions.cpp.o: CXX_COMPILER__grade_manager_unscanned_Debug /Users/bruce/Documents/GitHub/grade_manager_v2/src/functions.cpp || cmake_object_order_depends_target_grade_manager
+  DEFINES = -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGLWIDGETS_LIB -DQT_OPENGL_LIB -DQT_SQL_LIB -DQT_UITOOLS_LIB -DQT_WIDGETS_LIB
+  DEP_FILE = CMakeFiles/grade_manager.dir/src/functions.cpp.o.d
+  FLAGS = -g -std=gnu++17 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.3.sdk
+  INCLUDES = -I/Users/bruce/Documents/GitHub/grade_manager_v2/include -isystem /opt/homebrew/opt/qt/lib/QtWidgets.framework/Headers -iframework /opt/homebrew/opt/qt/lib -isystem /opt/homebrew/opt/qt/lib/QtCore.framework/Headers -isystem /opt/homebrew/opt/qt/share/qt/mkspecs/macx-clang -isystem /opt/homebrew/opt/qt/include -isystem /opt/homebrew/opt/qt/lib/QtGui.framework/Headers -isystem /opt/homebrew/opt/qt/lib/QtUiTools.framework/Headers -isystem /opt/homebrew/opt/qt/lib/QtOpenGLWidgets.framework/Headers -isystem /opt/homebrew/opt/qt/lib/QtOpenGL.framework/Headers -isystem /opt/homebrew/opt/qt/lib/QtSql.framework/Headers
+  OBJECT_DIR = CMakeFiles/grade_manager.dir
+  OBJECT_FILE_DIR = CMakeFiles/grade_manager.dir/src
 
 
 # =============================================================================
-# Link build statements for EXECUTABLE target MyQtProject
+# Link build statements for EXECUTABLE target grade_manager
 
 
 #############################################
-# Link the executable MyQtProject
+# Link the executable grade_manager
 
-build MyQtProject: CXX_EXECUTABLE_LINKER__MyQtProject_Debug CMakeFiles/MyQtProject.dir/src/main.cpp.o | /opt/homebrew/opt/qt/lib/QtUiTools.framework/Versions/A/QtUiTools /opt/homebrew/opt/qt/lib/QtSql.framework/Versions/A/QtSql /opt/homebrew/opt/qt/lib/QtOpenGLWidgets.framework/Versions/A/QtOpenGLWidgets /opt/homebrew/opt/qt/lib/QtWidgets.framework/Versions/A/QtWidgets /opt/homebrew/opt/qt/lib/QtOpenGL.framework/Versions/A/QtOpenGL /opt/homebrew/opt/qt/lib/QtGui.framework/Versions/A/QtGui /opt/homebrew/opt/qt/lib/QtCore.framework/Versions/A/QtCore
+build grade_manager: CXX_EXECUTABLE_LINKER__grade_manager_Debug CMakeFiles/grade_manager.dir/src/main.cpp.o CMakeFiles/grade_manager.dir/src/functions.cpp.o | /opt/homebrew/opt/qt/lib/QtUiTools.framework/Versions/A/QtUiTools /opt/homebrew/opt/qt/lib/QtSql.framework/Versions/A/QtSql /opt/homebrew/opt/qt/lib/QtOpenGLWidgets.framework/Versions/A/QtOpenGLWidgets /opt/homebrew/opt/qt/lib/QtWidgets.framework/Versions/A/QtWidgets /opt/homebrew/opt/qt/lib/QtOpenGL.framework/Versions/A/QtOpenGL /opt/homebrew/opt/qt/lib/QtGui.framework/Versions/A/QtGui /opt/homebrew/opt/qt/lib/QtCore.framework/Versions/A/QtCore
   FLAGS = -g -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.3.sdk
   LINK_LIBRARIES = -Wl,-rpath,/opt/homebrew/opt/qt/lib  /opt/homebrew/opt/qt/lib/QtUiTools.framework/Versions/A/QtUiTools  /opt/homebrew/opt/qt/lib/QtSql.framework/Versions/A/QtSql  /opt/homebrew/opt/qt/lib/QtOpenGLWidgets.framework/Versions/A/QtOpenGLWidgets  /opt/homebrew/opt/qt/lib/QtWidgets.framework/Versions/A/QtWidgets  /opt/homebrew/opt/qt/lib/QtOpenGL.framework/Versions/A/QtOpenGL  /opt/homebrew/opt/qt/lib/QtGui.framework/Versions/A/QtGui  -framework OpenGL  -framework AGL  -framework AppKit  -framework ImageIO  -framework Metal  /opt/homebrew/opt/qt/lib/QtCore.framework/Versions/A/QtCore  -framework IOKit  -framework DiskArbitration
   LINK_PATH = -F/opt/homebrew/opt/qt/lib
-  OBJECT_DIR = CMakeFiles/MyQtProject.dir
+  OBJECT_DIR = CMakeFiles/grade_manager.dir
   POST_BUILD = :
   PRE_LINK = :
-  TARGET_FILE = MyQtProject
-  TARGET_PDB = MyQtProject.dbg
+  TARGET_FILE = grade_manager
+  TARGET_PDB = grade_manager.dbg
 
 
 #############################################
@@ -110,7 +118,7 @@ build rebuild_cache: phony CMakeFiles/rebuild_cache.util
 #############################################
 # Folder: /Users/bruce/Documents/GitHub/grade_manager_v2/build
 
-build all: phony MyQtProject
+build all: phony grade_manager
 
 # =============================================================================
 # Built-in targets

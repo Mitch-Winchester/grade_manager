@@ -27,7 +27,7 @@
 					[
 						0
 					],
-					"name" : "MyQtProject",
+					"name" : "grade_manager",
 					"targetIndexes" : 
 					[
 						0
@@ -38,9 +38,9 @@
 			[
 				{
 					"directoryIndex" : 0,
-					"id" : "MyQtProject::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-MyQtProject-Debug-ab3aab584a1d3a35fb14.json",
-					"name" : "MyQtProject",
+					"id" : "grade_manager::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-grade_manager-Debug-944c06ee5cfdf6a973c6.json",
+					"name" : "grade_manager",
 					"projectIndex" : 0
 				}
 			]
