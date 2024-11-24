@@ -9,13 +9,13 @@ find_package(Qt6 REQUIRED COMPONENTS Widgets UiTools Sql Pdf)
 
 set(PROJECT_SOURCES
     src/main.cpp
-    src/functions.cpp
-    src/functions.h
-    src/importFiles.cpp
-    src/printTranscript.cpp
-    src/mainwindow.ui
-    src/resultswindow.ui
-    src/addeditwindow.ui
+    src/functions/functions.cpp
+    src/functions/functions.h
+    src/functions/importFiles.cpp
+    src/functions/printTranscript.cpp
+    src/gui/mainwindow.ui
+    src/gui/resultswindow.ui
+    src/gui/addeditwindow.ui
 )
 
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCES})

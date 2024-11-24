@@ -1,4 +1,4 @@
-#include "functions.h"
+#include "functions/functions.h"
 
 #include <QApplication>
 #include <QWidget>
@@ -12,7 +12,7 @@
 
 // Function to create the add/edit window
 QWidget* createAddEditWindow(QString studID, std::shared_ptr<QMap<std::string, QString>> selectedRow) {
-    QWidget* addEditWindow = loadUiFile("../src/addEditWindow.ui");
+    QWidget* addEditWindow = loadUiFile("../src/gui/addEditWindow.ui");
     QList<QList<QString>> uniqueItems(3);
 
     // get combo boxes
@@ -107,7 +107,7 @@ QWidget* createAddEditWindow(QString studID, std::shared_ptr<QMap<std::string, Q
 
 // Function to create the grade window
 QWidget* createGradeWindow(QString studID) {
-    QWidget* gradeWindow = loadUiFile("../src/resultswindow.ui");
+    QWidget* gradeWindow = loadUiFile("../src/gui/resultswindow.ui");
     std::shared_ptr<QMap<std::string, QString>> selectedRow = std::make_shared<QMap<std::string, QString>>();
 
     // ensure db connection exists
@@ -205,7 +205,7 @@ int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
 
     // Load the main window
-    QWidget* mainWindow = loadUiFile("../src/mainwindow.ui");
+    QWidget* mainWindow = loadUiFile("../src/gui/mainwindow.ui");
 
     // get and connect search button
     QPushButton* searchButton = mainWindow->findChild<QPushButton*>("searchButton");
