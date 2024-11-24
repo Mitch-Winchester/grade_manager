@@ -141,16 +141,16 @@ void importGrades() {
             int courseNum = fileParts[1].toInt();
 
             // ensure db connection exists
-            QSqlDatabase db = databaseConnection();
+            QSqlDatabase importConn = databaseConnection(QString("importConn"));
             try {
-                int crn = getCRN(db, coursePrefix, courseNum, year, semester);
+                int crn = getCRN(importConn, coursePrefix, courseNum, year, semester);
                 if (crn == -1) {
-                    db.close();
+                    importConn.close();
                     throw "CRN not found!";
                 }
 
-                processExcelFile(db, QString::fromStdString(subDirPath) + "/" + fileName, crn);
-                db.close();
+                processExcelFile(importConn, QString::fromStdString(subDirPath) + "/" + fileName, crn);
+                importConn.close();
             } catch (std::exception& crnEx) {
                 qDebug() << "Failed CRN query: " << crnEx.what();
             }

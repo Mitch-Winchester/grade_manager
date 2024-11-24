@@ -48,7 +48,7 @@ QString calculateGPA(QSqlQuery &gradeData) {
 }
 
 // Function to connect to database
-QSqlDatabase databaseConnection() {
+QSqlDatabase databaseConnection(QString connectionName) {
     QString dbName = "gradeDB";
     QString user = "mitch";
     // database configuration
@@ -57,7 +57,7 @@ QSqlDatabase databaseConnection() {
     QString dbIp = settings.value("Database/IP").toString();
     QString dbPassword = settings.value("Database/Password").toString();
 
-    QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL");
+    QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL", connectionName);
     db.setHostName(dbIp);
     db.setDatabaseName(dbName);
     db.setUserName(user);
@@ -113,7 +113,7 @@ QMap<std::string, QString> onSelectionChanged(QSqlQueryModel* model, const QItem
     return selectedRow;
 }
 
-void onSaveButtonClicked(QString studID, QWidget* addEditWindow, std::shared_ptr<QMap<std::string, QString>> selectedRow) {
+void onSaveButtonClicked(const QSqlDatabase &db, QString studID, QWidget* addEditWindow, std::shared_ptr<QMap<std::string, QString>> selectedRow) {
     // get combo boxes
     QComboBox* gradeCombo = addEditWindow->findChild<QComboBox*>("gradeCombo");
     QComboBox* crnCombo = addEditWindow->findChild<QComboBox*>("crnCombo");
@@ -122,7 +122,7 @@ void onSaveButtonClicked(QString studID, QWidget* addEditWindow, std::shared_ptr
     int crn = QString(crnCombo->currentText()).toInt();
     QString grade = QString(gradeCombo->currentText());
 
-    QSqlQuery gradeQuery;
+    QSqlQuery gradeQuery(db);
 
     // sql insert string
     if (selectedRow->isEmpty()) {

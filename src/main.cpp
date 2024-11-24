@@ -11,7 +11,7 @@
 #include <QIntValidator>
 
 // Function to create the add/edit window
-QWidget* createAddEditWindow(QString studID, std::shared_ptr<QMap<std::string, QString>> selectedRow) {
+QWidget* createAddEditWindow(QString studID, std::shared_ptr<QMap<std::string, QString>> selectedRow, std::function<void()> refreshGradeTable) {
     QWidget* addEditWindow = loadUiFile("../src/gui/addEditWindow.ui");
     QList<QList<QString>> uniqueItems(3);
 
@@ -44,10 +44,10 @@ QWidget* createAddEditWindow(QString studID, std::shared_ptr<QMap<std::string, Q
     }
 
     // ensure db connection exists
-    QSqlDatabase db = databaseConnection();
+    QSqlDatabase addEditConn = databaseConnection(QString("addEditConn"));
     // set dynamic combo box values
     QString coursesQuery = QString("SELECT crn, course_prefix, course_num FROM courses");
-    QSqlQuery coursesInfo = executeQuery(db, coursesQuery);
+    QSqlQuery coursesInfo = executeQuery(addEditConn, coursesQuery);
     
     setComboBoxValues(crnCombo, prefixCombo, numberCombo, std::move(coursesInfo));
 
@@ -94,8 +94,10 @@ QWidget* createAddEditWindow(QString studID, std::shared_ptr<QMap<std::string, Q
     
     // get and connect save button
     QPushButton* saveButton = addEditWindow->findChild<QPushButton*>("saveButton");
-    QObject::connect(saveButton, &QPushButton::clicked, addEditWindow, [studID, addEditWindow, selectedRow](){
-        onSaveButtonClicked(studID, addEditWindow, selectedRow);
+    QObject::connect(saveButton, &QPushButton::clicked, addEditWindow, [addEditConn, studID, addEditWindow, selectedRow, refreshGradeTable](){
+        onSaveButtonClicked(addEditConn, studID, addEditWindow, selectedRow);
+        addEditWindow->close();
+        refreshGradeTable();
     });
 
     // get and connect cancel button
@@ -111,10 +113,10 @@ QWidget* createGradeWindow(QString studID) {
     std::shared_ptr<QMap<std::string, QString>> selectedRow = std::make_shared<QMap<std::string, QString>>();
 
     // ensure db connection exists
-    QSqlDatabase db = databaseConnection();
+    QSqlDatabase gradeTableConn = databaseConnection(QString("gradeTableConn"));
     // get student name
     QString studentQuery = QString("SELECT * FROM students WHERE student_id LIKE '%%1%'").arg(studID);
-    QSqlQuery nameResults = executeQuery(db, studentQuery);
+    QSqlQuery nameResults = executeQuery(gradeTableConn, studentQuery);
     QString fullName;
 
     while (nameResults.next()) {
@@ -125,29 +127,36 @@ QWidget* createGradeWindow(QString studID) {
         displayName->setText(fullName);
     }
 
-    // query grades using student id
-    QString gradeQuery = QString("SELECT courses.crn, course_prefix, course_num, semester, year, hours, grade FROM courses INNER JOIN grades on courses.crn = grades.crn WHERE grades.student_id LIKE '%%1%'").arg(studID);
-    QSqlQuery gradeData = executeQuery(db, gradeQuery);
-
-    // GPA calculation
-    QString cumGpa = calculateGPA(gradeData);
-    QLabel* gpaLabel = gradeWindow->findChild<QLabel*>("cumGpa");
-    gpaLabel->setText(cumGpa);
-
-    // display in table
+    // Display grade data
     QSqlQueryModel* model = new QSqlQueryModel();
-    model->setQuery(std::move(gradeData));
-
-    if (model->lastError().isValid()) {
-        qDebug() << "Model error: " << model->lastError().text();
-    }
-    db.close();
-    // connect model to table
     QTableView* gradeTable = gradeWindow->findChild<QTableView*>("gradeTable");
-    gradeTable->setModel(model);
-    gradeTable->resizeColumnsToContents();
-    gradeTable->setSelectionBehavior(QTableView::SelectRows);
+    QString cumGpa = "";
+    // lambda expression to refresh table
+    auto refreshGradeTable = [model, gradeTable, studID, gradeTableConn, &cumGpa, gradeWindow]() {
+        // query grades using student id
+        QString gradeQuery = QString("SELECT courses.crn, course_prefix, course_num, semester, year, hours, grade FROM courses INNER JOIN grades on courses.crn = grades.crn WHERE grades.student_id LIKE '%%1%'").arg(studID);
+        QSqlQuery gradeData = executeQuery(gradeTableConn, gradeQuery);
+
+        // GPA calculation
+        cumGpa = calculateGPA(gradeData);
+        QLabel* gpaLabel = gradeWindow->findChild<QLabel*>("cumGpa");
+        gpaLabel->setText(cumGpa);
+
+        model->setQuery(std::move(gradeData));
+
+        if (model->lastError().isValid()) {
+            qDebug() << "Model error: " << model->lastError().text();
+        }
+
+        // connect model to table
+        gradeTable->setModel(model);
+        gradeTable->resizeColumnsToContents();
+        gradeTable->setSelectionBehavior(QTableView::SelectRows); 
+    };
     
+    // Initial table load
+    refreshGradeTable();
+
     // Connect the selection changed signal to function
     QObject::connect(gradeTable->selectionModel(), &QItemSelectionModel::selectionChanged,
                 gradeWindow, [model, selectedRow](const QItemSelection &selected, const QItemSelection &deselected) {
@@ -156,10 +165,10 @@ QWidget* createGradeWindow(QString studID) {
 
     // get and connect add/edit button
     QPushButton* addEditButton = gradeWindow->findChild<QPushButton*>("addEditButton");
-    QObject::connect(addEditButton, &QPushButton::clicked, gradeWindow, [db, studID, selectedRow](){
+    QObject::connect(addEditButton, &QPushButton::clicked, gradeWindow, [studID, selectedRow, refreshGradeTable](){
         // create addEditWindow
-        QWidget* addEditWindow = createAddEditWindow(studID, selectedRow);
-        
+        QWidget* addEditWindow = createAddEditWindow(studID, selectedRow, refreshGradeTable);
+
         addEditWindow->show();
     });
 
@@ -182,12 +191,12 @@ void onSearchButtonClicked(QWidget* mainWindow) {
     QString studID = inputBox->text();
 
     // ensure db connection exists
-    QSqlDatabase db = databaseConnection();
-    if (db.isValid() && studID != "") {
+    QSqlDatabase studIdConn = databaseConnection(QString("studIdConn"));
+    if (studIdConn.isValid() && studID != "") {
         // validate student id
         QString studentQuery = QString("SELECT * FROM students WHERE student_id LIKE '%%1%'").arg(studID);
-        QSqlQuery studentResults = executeQuery(db, studentQuery);
-        db.close();
+        QSqlQuery studentResults = executeQuery(studIdConn, studentQuery);
+        studIdConn.close();
 
         if (studentResults.next()) {
             // Create grade window
