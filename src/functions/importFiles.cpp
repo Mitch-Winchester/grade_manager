@@ -106,7 +106,10 @@ void processExcelFile(QSqlDatabase &db, const QString &filePath, int crn) {
 void importGrades() {
     std::string parentDir = "../all_grades";
     QWidget* folderAlertWindow = createAlertWindow("");
+    QLabel* foldAlertLab = folderAlertWindow->findChild<QLabel*>("alertLabel");
     QLabel* messageLabel = folderAlertWindow->findChild<QLabel*>("messageLabel");
+    QLabel* errorLabel = folderAlertWindow->findChild<QLabel*>("errorLabel");
+    foldAlertLab->setText("Import in progress...");
     folderAlertWindow->show();
     QCoreApplication::processEvents();
 
@@ -117,7 +120,7 @@ void importGrades() {
         if (!subDirName.startsWith("Grades")) {
             QString errMessage = "Skipping unrelated folder: " + subDirName;
             qDebug() << errMessage;
-            messageLabel->setText(errMessage);
+            errorLabel->setText(errMessage);
             QCoreApplication::processEvents();
         }
 
@@ -125,7 +128,7 @@ void importGrades() {
         if (folderParts.size() != 3) {
             QString errMessage = "Skipping folder with unexpected format: " + subDirName;
             qDebug() << errMessage;
-            messageLabel->setText(errMessage);
+            errorLabel->setText(errMessage);
             QCoreApplication::processEvents();
         }
 
@@ -135,7 +138,6 @@ void importGrades() {
 
         QString folderMessage = "Processing folder: " + subDirName;
         qDebug() << folderMessage;
-        QLabel* foldAlertLab = folderAlertWindow->findChild<QLabel*>("alertLabel");
         foldAlertLab->setText(folderMessage);
         QCoreApplication::processEvents();
 
@@ -154,7 +156,7 @@ void importGrades() {
             if (fileParts.size() != 4) {
                 QString errMessage = "Skipping file with unexpected format: " + baseName;
                 qDebug() << errMessage;
-                messageLabel->setText(errMessage);
+                errorLabel->setText(errMessage);
                 QCoreApplication::processEvents();
                 continue;
             }
@@ -176,11 +178,12 @@ void importGrades() {
             } catch (std::exception& crnEx) {
                 QString errMessage = "Failed CRN query: " + QString(crnEx.what());
                 qDebug() << errMessage;
-                messageLabel->setText(errMessage);
+                errorLabel->setText(errMessage);
                 QCoreApplication::processEvents();
             }
 
         }
+        errorLabel->setText("");
         count--;
     }
 

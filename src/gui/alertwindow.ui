@@ -23,10 +23,19 @@
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout">
-    <item row="2" column="1">
-     <widget class="QPushButton" name="okButton">
+    <item row="0" column="0" colspan="3">
+     <widget class="QLabel" name="alertLabel">
+      <property name="font">
+       <font>
+        <pointsize>20</pointsize>
+        <bold>true</bold>
+       </font>
+      </property>
       <property name="text">
-       <string>Ok</string>
+       <string>Alert Message</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignmentFlag::AlignCenter</set>
       </property>
      </widget>
     </item>
@@ -40,7 +49,7 @@
       </property>
      </widget>
     </item>
-    <item row="2" column="0">
+    <item row="3" column="0">
      <spacer name="horizontalSpacer">
       <property name="orientation">
        <enum>Qt::Orientation::Horizontal</enum>
@@ -53,7 +62,14 @@
       </property>
      </spacer>
     </item>
-    <item row="2" column="2">
+    <item row="3" column="1">
+     <widget class="QPushButton" name="okButton">
+      <property name="text">
+       <string>Ok</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="2">
      <spacer name="horizontalSpacer_2">
       <property name="orientation">
        <enum>Qt::Orientation::Horizontal</enum>
@@ -66,16 +82,10 @@
       </property>
      </spacer>
     </item>
-    <item row="0" column="0" colspan="3">
-     <widget class="QLabel" name="alertLabel">
-      <property name="font">
-       <font>
-        <pointsize>20</pointsize>
-        <bold>true</bold>
-       </font>
-      </property>
+    <item row="2" column="0" colspan="3">
+     <widget class="QLabel" name="errorLabel">
       <property name="text">
-       <string>Alert Message</string>
+       <string/>
       </property>
       <property name="alignment">
        <set>Qt::AlignmentFlag::AlignCenter</set>
