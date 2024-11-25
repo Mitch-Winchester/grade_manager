@@ -10,6 +10,30 @@
 
 #include <QIntValidator>
 
+// Function to create confirmation message window
+QWidget* createConfirmWindow(QString message, std::function<void()> onConfirm) {
+    QWidget* confirmWindow = loadUiFile("../src/gui/confirmationwindow.ui");
+
+    // get and set message label
+    QLabel* messageLabel = confirmWindow->findChild<QLabel*>("messageLabel");
+    messageLabel->setText(message);
+
+    // get and connect confirm button
+    QPushButton* confirmButton = confirmWindow->findChild<QPushButton*>("confirmButton");
+    QObject::connect(confirmButton, &QPushButton::clicked, confirmWindow, [confirmWindow, onConfirm](){
+        if (onConfirm) {
+            onConfirm();
+        }
+        confirmWindow->close();
+    });
+
+    // get and connect cancel button
+    QPushButton* cancelButton = confirmWindow->findChild<QPushButton*>("cancelButton");
+    QObject::connect(cancelButton, &QPushButton::clicked, confirmWindow, &QWidget::close);
+    
+    return confirmWindow;
+}
+
 // Function to create the add/edit window
 QWidget* createAddEditWindow(QString studID, std::shared_ptr<QMap<std::string, QString>> selectedRow, std::function<void()> refreshGradeTable) {
     QWidget* addEditWindow = loadUiFile("../src/gui/addEditWindow.ui");
@@ -130,17 +154,16 @@ QWidget* createGradeWindow(QString studID) {
     // Display grade data
     QSqlQueryModel* model = new QSqlQueryModel();
     QTableView* gradeTable = gradeWindow->findChild<QTableView*>("gradeTable");
-    QString cumGpa = "";
     // lambda expression to refresh table
-    auto refreshGradeTable = [model, gradeTable, studID, gradeTableConn, &cumGpa, gradeWindow]() {
+    auto refreshGradeTable = [model, gradeTable, studID, gradeTableConn, gradeWindow]() {
         // query grades using student id
         QString gradeQuery = QString("SELECT courses.crn, course_prefix, course_num, semester, year, hours, grade FROM courses INNER JOIN grades on courses.crn = grades.crn WHERE grades.student_id LIKE '%%1%'").arg(studID);
         QSqlQuery gradeData = executeQuery(gradeTableConn, gradeQuery);
 
         // GPA calculation
-        cumGpa = calculateGPA(gradeData);
+        QString calculatedGpa = calculateGPA(gradeData);
         QLabel* gpaLabel = gradeWindow->findChild<QLabel*>("cumGpa");
-        gpaLabel->setText(cumGpa);
+        gpaLabel->setText(calculatedGpa);
 
         model->setQuery(std::move(gradeData));
 
@@ -151,7 +174,7 @@ QWidget* createGradeWindow(QString studID) {
         // connect model to table
         gradeTable->setModel(model);
         gradeTable->resizeColumnsToContents();
-        gradeTable->setSelectionBehavior(QTableView::SelectRows); 
+        gradeTable->setSelectionBehavior(QTableView::SelectRows);
     };
     
     // Initial table load
@@ -174,8 +197,24 @@ QWidget* createGradeWindow(QString studID) {
 
     // get and connect print button
     QPushButton* printButton = gradeWindow->findChild<QPushButton*>("printButton");
-    QObject::connect(printButton, &QPushButton::clicked, gradeWindow, [studID, fullName, cumGpa](){
+    QObject::connect(printButton, &QPushButton::clicked, gradeWindow, [gradeWindow, studID, fullName](){
+        QLabel* gpaLabel = gradeWindow->findChild<QLabel*>("cumGpa");
+        QString cumGpa = QString(gpaLabel->text());
         printTranscript(studID, fullName, cumGpa);
+    });
+
+    // get and connect delete button
+    QPushButton* deleteButton = gradeWindow->findChild<QPushButton*>("deleteButton");
+    QObject::connect(deleteButton, &QPushButton::clicked, gradeWindow, 
+                                            [gradeWindow, gradeTableConn, studID, selectedRow, refreshGradeTable](){
+        // create confirmation window
+        QWidget* confirmWindow = createConfirmWindow("Are you sure you want to delete the selected grade record?", 
+                                                            [gradeTableConn, studID, selectedRow, refreshGradeTable](){
+            onDeleteButtonClicked(gradeTableConn, studID, selectedRow);
+            refreshGradeTable();
+        });
+
+        confirmWindow->show();
     });
 
     // get and connect close button

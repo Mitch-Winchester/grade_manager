@@ -16,6 +16,7 @@ set(PROJECT_SOURCES
     src/gui/mainwindow.ui
     src/gui/resultswindow.ui
     src/gui/addeditwindow.ui
+    src/gui/confirmationwindow.ui
 )
 
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCES})

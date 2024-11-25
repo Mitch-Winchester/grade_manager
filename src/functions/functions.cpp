@@ -41,9 +41,14 @@ QString calculateGPA(QSqlQuery &gradeData) {
         }
     }
 
-    gpa = qualityPoints / totalHours;
+    QString formattedGPA;
+    if (totalHours == 0) {
+        formattedGPA = "0.00";
+    } else {
+        gpa = qualityPoints / totalHours;
+        formattedGPA = QString::number(gpa, 'f', 2);
+    }
 
-    QString formattedGPA = QString::number(gpa, 'f', 2);
     return formattedGPA;
 }
 
@@ -143,6 +148,20 @@ void onSaveButtonClicked(const QSqlDatabase &db, QString studID, QWidget* addEdi
 
     // print for testing
     qDebug() << " ID: " << studID << "CRN: " << crn << "Grade: " << grade;
+}
+
+void onDeleteButtonClicked(const QSqlDatabase &db, QString studID, std::shared_ptr<QMap<std::string, QString>> selectedRow) {
+    QSqlQuery deleteQuery(db);
+
+    if (selectedRow->isEmpty()) {
+        //Error message
+    } else {
+        deleteQuery.prepare("DELETE FROM grades WHERE student_id=:student_id AND crn=:crn");
+        deleteQuery.bindValue(":student_id", studID);
+        deleteQuery.bindValue(":crn", (*selectedRow)["crn"]);
+
+        deleteQuery.exec();
+    }
 }
 
 void setComboBoxValues(QComboBox* crnCombo, QComboBox* prefixCombo, QComboBox* numberCombo, QSqlQuery coursesInfo) {
