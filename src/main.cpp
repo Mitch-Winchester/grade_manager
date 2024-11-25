@@ -2,9 +2,7 @@
 
 #include <QApplication>
 #include <QWidget>
-#include <QPushButton>
 #include <QLineEdit>
-#include <QLabel>
 #include <QTableView>
 #include <QComboBox>
 
@@ -118,10 +116,23 @@ QWidget* createAddEditWindow(QString studID, std::shared_ptr<QMap<std::string, Q
     
     // get and connect save button
     QPushButton* saveButton = addEditWindow->findChild<QPushButton*>("saveButton");
-    QObject::connect(saveButton, &QPushButton::clicked, addEditWindow, [addEditConn, studID, addEditWindow, selectedRow, refreshGradeTable](){
-        onSaveButtonClicked(addEditConn, studID, addEditWindow, selectedRow);
-        addEditWindow->close();
-        refreshGradeTable();
+    QObject::connect(saveButton, &QPushButton::clicked, addEditWindow, 
+                        [addEditConn, studID, addEditWindow, selectedRow, refreshGradeTable](){
+        // create confirmation window
+        QString message;
+        if (selectedRow->isEmpty()) {
+            message = "Are you sure you want to add this new record?";
+        } else {
+            message = "Are you sure you want to update the existing record?";
+        }
+        QWidget* confirmWindow = createConfirmWindow(message, 
+                        [addEditConn, studID, addEditWindow, selectedRow, refreshGradeTable](){
+            onSaveButtonClicked(addEditConn, studID, addEditWindow, selectedRow);
+            refreshGradeTable();
+            addEditWindow->close();
+        });
+
+        confirmWindow->show();
     });
 
     // get and connect cancel button
@@ -201,6 +212,9 @@ QWidget* createGradeWindow(QString studID) {
         QLabel* gpaLabel = gradeWindow->findChild<QLabel*>("cumGpa");
         QString cumGpa = QString(gpaLabel->text());
         printTranscript(studID, fullName, cumGpa);
+        QString message = QString("Transcript for %1 has been successfully printed!").arg(fullName);
+        QWidget* alertWindow = createAlertWindow(message);
+        alertWindow->show();
     });
 
     // get and connect delete button
@@ -208,13 +222,18 @@ QWidget* createGradeWindow(QString studID) {
     QObject::connect(deleteButton, &QPushButton::clicked, gradeWindow, 
                                             [gradeWindow, gradeTableConn, studID, selectedRow, refreshGradeTable](){
         // create confirmation window
-        QWidget* confirmWindow = createConfirmWindow("Are you sure you want to delete the selected grade record?", 
-                                                            [gradeTableConn, studID, selectedRow, refreshGradeTable](){
-            onDeleteButtonClicked(gradeTableConn, studID, selectedRow);
-            refreshGradeTable();
-        });
+        if (selectedRow->isEmpty()) {
+            QWidget* alertWindow = createAlertWindow("Please select a valid record from the table!");
+            alertWindow->show();
+        } else {
+            QWidget* confirmWindow = createConfirmWindow("Are you sure you want to delete the selected grade record?", 
+                                                                [gradeTableConn, studID, selectedRow, refreshGradeTable](){
+                onDeleteButtonClicked(gradeTableConn, studID, selectedRow);
+                refreshGradeTable();
+            });
 
-        confirmWindow->show();
+            confirmWindow->show();
+        }
     });
 
     // get and connect close button
@@ -242,7 +261,10 @@ void onSearchButtonClicked(QWidget* mainWindow) {
             QWidget* gradeWindow = createGradeWindow(studID);
             gradeWindow->show();
         } else {
-            qDebug() << "Invalid student id!";
+            QString message = "Invalid student id!";
+            qDebug() << message;
+            QWidget* alertWindow = createAlertWindow(message);
+            alertWindow->show();
         }
 
     }

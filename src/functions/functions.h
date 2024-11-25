@@ -2,6 +2,8 @@
 #define FUNCTIONS_H
 
 #include <QString>
+#include <QLabel>
+#include <QPushButton>
 #include <QComboBox>
 #include <QSqlQuery>
 #include <QSqlError>
@@ -13,6 +15,7 @@
 
 QSqlDatabase databaseConnection(QString connectionName);
 QWidget* loadUiFile(const QString& filePath);
+QWidget* createAlertWindow(QString message);
 QString calculateGPA(QSqlQuery &gradeData);
 QSqlQuery executeQuery(const QSqlDatabase &db, const QString &queryStr);
 QMap<std::string, QString> onSelectionChanged(QSqlQueryModel* model, const QItemSelection &selected, const QItemSelection &deselected);

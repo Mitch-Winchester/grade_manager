@@ -22,6 +22,21 @@ QWidget* loadUiFile(const QString& filePath) {
     return widget;
 }
 
+// Function to create alert message window
+QWidget* createAlertWindow(QString message) {
+    QWidget* alertWindow = loadUiFile("../src/gui/alertwindow.ui");
+
+    // get and set message label
+    QLabel* messageLabel = alertWindow->findChild<QLabel*>("messageLabel");
+    messageLabel->setText(message);
+
+    // get and connect cancel button
+    QPushButton* okButton = alertWindow->findChild<QPushButton*>("okButton");
+    QObject::connect(okButton, &QPushButton::clicked, alertWindow, &QWidget::close);
+    
+    return alertWindow;
+}
+
 // Function to calculate GPA
 QString calculateGPA(QSqlQuery &gradeData) {
     double totalHours = 0;

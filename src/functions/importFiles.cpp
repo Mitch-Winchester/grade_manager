@@ -108,11 +108,10 @@ void importGrades() {
 
     // get all subdirectories in the parent directory
     QStringList subDirs = getSubdirectories(parentDir);
-
+    int count = subDirs.length();
     for (const QString &subDirName : subDirs) {
         if (!subDirName.startsWith("Grades")) {
             qDebug() << "Skipping unrelated folder: " << subDirName;
-            continue;
         }
 
         QStringList folderParts = subDirName.split(' ');
@@ -152,10 +151,24 @@ void importGrades() {
                 processExcelFile(importConn, QString::fromStdString(subDirPath) + "/" + fileName, crn);
                 importConn.close();
             } catch (std::exception& crnEx) {
-                qDebug() << "Failed CRN query: " << crnEx.what();
+                QString message = "Failed CRN query: " + QString(crnEx.what());
+                qDebug() << message;
+                QWidget* alertWindow = createAlertWindow(message);
+                alertWindow->show();
             }
 
         }
+        count--;
     }
-
+    if (count == 0 && subDirs.length() > 0) {
+        QString message = "Import successful!";
+        qDebug() << message;
+        QWidget* alertWindow = createAlertWindow(message);
+        alertWindow->show();
+    } else if (count == 0) {
+        QString message = "No files found in folder";
+        qDebug() << message;
+        QWidget* alertWindow = createAlertWindow(message);
+        alertWindow->show();
+    }
 }
