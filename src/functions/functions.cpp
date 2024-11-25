@@ -180,7 +180,7 @@ void onDeleteButtonClicked(const QSqlDatabase &db, QString studID, std::shared_p
     }
 }
 
-void setComboBoxValues(QWidget* addEditWindow, QSqlQuery coursesInfo) {
+void setComboBoxValues(QWidget* addEditWindow, QSqlQuery coursesInfo, std::shared_ptr<QVariantMap> stateTracker) {
     int columns = coursesInfo.record().count();
     QList<QList<QString>> uniqueItems(columns);
 
@@ -191,6 +191,14 @@ void setComboBoxValues(QWidget* addEditWindow, QSqlQuery coursesInfo) {
     QComboBox* yearCombo = addEditWindow->findChild<QComboBox*>("yearCombo");
     QComboBox* semesterCombo = addEditWindow->findChild<QComboBox*>("semesterCombo");
     QComboBox* hoursCombo = addEditWindow->findChild<QComboBox*>("hoursCombo");
+
+    // clear combo boxes
+    crnCombo->clear();
+    prefixCombo->clear();
+    numberCombo->clear();
+    yearCombo->clear();
+    semesterCombo->clear();
+    hoursCombo->clear();
 
     if (columns == 3) {
         QComboBox* gradeCombo = addEditWindow->findChild<QComboBox*>("gradeCombo");
@@ -233,13 +241,6 @@ void setComboBoxValues(QWidget* addEditWindow, QSqlQuery coursesInfo) {
         prefixCombo->setCurrentIndex(-1);
         numberCombo->setCurrentIndex(-1);
     } else {
-        // clear combo boxes
-        crnCombo->clear();
-        prefixCombo->clear();
-        numberCombo->clear();
-        yearCombo->clear();
-        semesterCombo->clear();
-        hoursCombo->clear();
         while (coursesInfo.next()) {
             if (!uniqueItems[0].contains(coursesInfo.value("crn").toString())) {
                 uniqueItems[0].append(coursesInfo.value("crn").toString());
@@ -263,7 +264,21 @@ void setComboBoxValues(QWidget* addEditWindow, QSqlQuery coursesInfo) {
             }
             if (!uniqueItems[5].contains(coursesInfo.value("hours").toString())) {
                 uniqueItems[5].append(coursesInfo.value("hours").toString());
-                hoursCombo->addItem(coursesInfo.value("hours").toString());
+                hoursCombo->addItem(coursesInfo.value("hours").toString()+".0");
+            }
+        }
+    }
+    // Check if more than one course option
+    bool multipleCourses = std::any_of(uniqueItems.begin(), uniqueItems.end(), [](const QList<QString>& row) {
+        return row.size() > 1;
+    });
+    // set initial selection of comboBoxes based on stateTracker
+    if (multipleCourses) {
+        for (auto state = (*stateTracker).begin(); state != (*stateTracker).end(); state++) {
+            if (state.value().toInt() == -1 || state.value().toString() == "") {
+                QString box = state.key() + "Combo";
+                QComboBox* combo = addEditWindow->findChild<QComboBox*>(box);
+                combo->setCurrentIndex(-1);
             }
         }
     }

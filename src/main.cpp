@@ -1,10 +1,8 @@
 #include "functions/functions.h"
 
 #include <QApplication>
-#include <QWidget>
 #include <QLineEdit>
 #include <QTableView>
-#include <QComboBox>
 
 #include <QIntValidator>
 
@@ -37,6 +35,10 @@ QWidget* createAddEditWindow(QString studID, std::shared_ptr<QMap<std::string, Q
     QWidget* addEditWindow = loadUiFile("../src/gui/addEditWindow.ui");
     QList<QList<QString>> uniqueItems(3);
 
+    // variables to keep track of selected options
+    std::shared_ptr<QVariantMap> stateTracker = std::make_shared<QVariantMap>(); 
+    *stateTracker = {{"crn", -1}, {"prefix", ""}, {"number", -1}, {"year", -1}, {"semester", ""}, {"hours", -1}};
+
     // get combo boxes    // get combo boxes
     QComboBox* crnCombo = addEditWindow->findChild<QComboBox*>("crnCombo");
     QComboBox* prefixCombo = addEditWindow->findChild<QComboBox*>("prefixCombo");
@@ -55,7 +57,7 @@ QWidget* createAddEditWindow(QString studID, std::shared_ptr<QMap<std::string, Q
     QString coursesQuery = QString("SELECT crn, course_prefix, course_num FROM courses");
     QSqlQuery coursesInfo = executeQuery(addEditConn, coursesQuery);
     
-    setComboBoxValues(addEditWindow, std::move(coursesInfo));
+    setComboBoxValues(addEditWindow, std::move(coursesInfo), stateTracker);
 
     // set initial state of combo boxes for update
     if (!selectedRow->isEmpty()) {
@@ -73,10 +75,6 @@ QWidget* createAddEditWindow(QString studID, std::shared_ptr<QMap<std::string, Q
         numberCombo->setCurrentText((*selectedRow)["course_num"]);
         numberCombo->setDisabled(true);
     }
-
-    // variables to keep track of selected options
-    std::shared_ptr<QVariantMap> stateTracker = std::make_shared<QVariantMap>(); 
-    *stateTracker = {{"crn", -1}, {"prefix", ""}, {"num", -1}, {"year", -1}, {"sem", ""}, {"hrs", -1}};
                                 
     // filter combo box options based on crn selected
     QObject::connect(crnCombo, &QComboBox::currentIndexChanged, addEditWindow, [addEditConn, crnCombo, addEditWindow, stateTracker](){
@@ -94,7 +92,7 @@ QWidget* createAddEditWindow(QString studID, std::shared_ptr<QMap<std::string, Q
         } else {
             qDebug() << "Query executed successfully.";
         }
-        setComboBoxValues(addEditWindow, std::move(coursesInfo));
+        setComboBoxValues(addEditWindow, std::move(coursesInfo), stateTracker);
 
         // Unblock signals after the update
         blockAllComboBoxes(addEditWindow, false);
@@ -109,11 +107,21 @@ QWidget* createAddEditWindow(QString studID, std::shared_ptr<QMap<std::string, Q
         (*stateTracker)["prefix"] = QString(prefixCombo->currentText());
 
         QSqlQuery coursesInfo(addEditConn);
-        coursesInfo.prepare("SELECT * FROM courses WHERE course_prefix LIKE :prefix AND (:course_num IS NULL OR course_num = :course_num)");
+        coursesInfo.prepare("SELECT * FROM courses WHERE course_prefix LIKE :prefix AND (:course_num IS NULL OR course_num = :course_num) AND (:semester IS NULL OR course_num = :semester) AND (:year IS NULL OR year = :year) AND (:hours IS NULL OR hours = :hours)");
         coursesInfo.bindValue(":prefix", (*stateTracker)["prefix"].toString());
 
-        if ((*stateTracker)["num"].toInt() != -1){
-            coursesInfo.bindValue(":course_num", (*stateTracker)["num"].toInt());
+        // check for other filters
+        if ((*stateTracker)["number"].toInt() != -1){
+            coursesInfo.bindValue(":course_num", (*stateTracker)["number"].toInt());
+        }
+        if ((*stateTracker)["semester"] != ""){
+            coursesInfo.bindValue(":semester", (*stateTracker)["semester"].toString());
+        }
+        if ((*stateTracker)["year"].toInt() != -1){
+            coursesInfo.bindValue(":year", (*stateTracker)["year"].toInt());
+        }
+        if ((*stateTracker)["hours"].toInt() != -1){
+            coursesInfo.bindValue(":hours", (*stateTracker)["hours"].toInt());
         }
 
         if (!coursesInfo.exec()) {
@@ -121,7 +129,7 @@ QWidget* createAddEditWindow(QString studID, std::shared_ptr<QMap<std::string, Q
         } else {
             qDebug() << "Query executed successfully.";
         }
-        setComboBoxValues(addEditWindow, std::move(coursesInfo));
+        setComboBoxValues(addEditWindow, std::move(coursesInfo), stateTracker);
 
         // Unblock signals after the update
         blockAllComboBoxes(addEditWindow, false);
@@ -133,14 +141,24 @@ QWidget* createAddEditWindow(QString studID, std::shared_ptr<QMap<std::string, Q
         blockAllComboBoxes(addEditWindow, true);
 
         // set tracker
-        (*stateTracker)["num"] = QString(numberCombo->currentText()).toInt();
+        (*stateTracker)["number"] = QString(numberCombo->currentText()).toInt();
         
         QSqlQuery coursesInfo(addEditConn);
-        coursesInfo.prepare("SELECT * FROM courses WHERE course_num LIKE :num AND (:course_prefix IS NULL OR course_prefix = :course_prefix)");
-        coursesInfo.bindValue(":num", (*stateTracker)["num"].toInt());
+        coursesInfo.prepare("SELECT * FROM courses WHERE course_num LIKE :num AND (:course_prefix IS NULL OR course_prefix = :course_prefix) AND (:semester IS NULL OR course_num = :semester) AND (:year IS NULL OR year = :year) AND (:hours IS NULL OR hours = :hours)");
+        coursesInfo.bindValue(":num", (*stateTracker)["number"].toInt());
 
+        // check for other filters
         if ((*stateTracker)["prefix"] != "") {
             coursesInfo.bindValue(":course_prefix", (*stateTracker)["prefix"].toString());
+        }
+        if ((*stateTracker)["semester"] != ""){
+            coursesInfo.bindValue(":semester", (*stateTracker)["semester"].toString());
+        }
+        if ((*stateTracker)["year"].toInt() != -1){
+            coursesInfo.bindValue(":year", (*stateTracker)["year"].toInt());
+        }
+        if ((*stateTracker)["hours"].toInt() != -1){
+            coursesInfo.bindValue(":hours", (*stateTracker)["hours"].toInt());
         }
 
         if (!coursesInfo.exec()) {
@@ -148,70 +166,118 @@ QWidget* createAddEditWindow(QString studID, std::shared_ptr<QMap<std::string, Q
         } else {
             qDebug() << "Query executed successfully.";
         }
-        setComboBoxValues(addEditWindow, std::move(coursesInfo));
+        setComboBoxValues(addEditWindow, std::move(coursesInfo), stateTracker);
 
         // Unblock signals after the update
         blockAllComboBoxes(addEditWindow, false);
     });
 
     // filter combo box options based on semester selected
-    QObject::connect(semesterCombo, &QComboBox::currentIndexChanged, addEditWindow, [addEditConn, semesterCombo, addEditWindow](){
+    QObject::connect(semesterCombo, &QComboBox::currentIndexChanged, addEditWindow, [addEditConn, semesterCombo, addEditWindow, stateTracker](){
         // Block signals to prevent recursive calls
         blockAllComboBoxes(addEditWindow, true);
 
-        // set dynamic combo box values
-        QString sem = QString(semesterCombo->currentText());
+        // set tracker
+        (*stateTracker)["semester"] = QString(semesterCombo->currentText());
+
         QSqlQuery coursesInfo(addEditConn);
-        coursesInfo.prepare("SELECT * FROM courses WHERE semester LIKE :sem");
-        coursesInfo.bindValue(":sem", sem);
+        coursesInfo.prepare("SELECT * FROM courses WHERE semester LIKE :sem AND (:course_prefix IS NULL OR course_prefix = :course_prefix) AND (:course_num IS NULL OR course_num = :course_num) AND (:year IS NULL OR year = :year) AND (:hours IS NULL OR hours = :hours)");
+        coursesInfo.bindValue(":sem", (*stateTracker)["semester"].toString());
+
+        // check for other filters
+        if ((*stateTracker)["prefix"] != "") {
+            coursesInfo.bindValue(":course_prefix", (*stateTracker)["prefix"].toString());
+        }
+        if ((*stateTracker)["number"].toInt() != -1){
+            coursesInfo.bindValue(":course_num", (*stateTracker)["number"].toInt());
+        }
+        if ((*stateTracker)["year"].toInt() != -1){
+            coursesInfo.bindValue(":year", (*stateTracker)["year"].toInt());
+        }
+        if ((*stateTracker)["hours"].toInt() != -1){
+            coursesInfo.bindValue(":hours", (*stateTracker)["hours"].toInt());
+        }
+
         if (!coursesInfo.exec()) {
             qDebug() << "Query failed: " << coursesInfo.lastError().text();
         } else {
             qDebug() << "Query executed successfully.";
         }
-        setComboBoxValues(addEditWindow, std::move(coursesInfo));
+        setComboBoxValues(addEditWindow, std::move(coursesInfo), stateTracker);
 
         // Unblock signals after the update
         blockAllComboBoxes(addEditWindow, false);
     });
 
     // filter combo box options based on year selected
-    QObject::connect(yearCombo, &QComboBox::currentIndexChanged, addEditWindow, [addEditConn, yearCombo, addEditWindow](){
+    QObject::connect(yearCombo, &QComboBox::currentIndexChanged, addEditWindow, [addEditConn, yearCombo, addEditWindow, stateTracker](){
         // Block signals to prevent recursive calls
         blockAllComboBoxes(addEditWindow, true);
 
-        // set dynamic combo box values
-        int year = QString(yearCombo->currentText()).toInt();
+        // set tracker
+        (*stateTracker)["year"] = QString(yearCombo->currentText()).toInt();
+
         QSqlQuery coursesInfo(addEditConn);
-        coursesInfo.prepare("SELECT * FROM courses WHERE year LIKE :year");
-        coursesInfo.bindValue(":year", year);
+        coursesInfo.prepare("SELECT * FROM courses WHERE year LIKE :year AND (:course_prefix IS NULL OR course_prefix = :course_prefix) AND (:course_num IS NULL OR course_num = :course_num) AND (:semester IS NULL OR semester = :semester) AND (:hours IS NULL OR hours = :hours)");
+        coursesInfo.bindValue(":year", (*stateTracker)["year"]);
+
+        // check for other filters
+        if ((*stateTracker)["number"].toInt() != -1){
+            coursesInfo.bindValue(":course_num", (*stateTracker)["number"].toInt());
+        }
+        if ((*stateTracker)["prefix"] != "") {
+            coursesInfo.bindValue(":course_prefix", (*stateTracker)["prefix"].toString());
+        }
+        if ((*stateTracker)["semester"] != ""){
+            coursesInfo.bindValue(":semester", (*stateTracker)["semester"].toString());
+        }
+        if ((*stateTracker)["hours"].toInt() != -1){
+            coursesInfo.bindValue(":hours", (*stateTracker)["hours"].toInt());
+        }
+
         if (!coursesInfo.exec()) {
             qDebug() << "Query failed: " << coursesInfo.lastError().text();
         } else {
             qDebug() << "Query executed successfully.";
         }
-        setComboBoxValues(addEditWindow, std::move(coursesInfo));
+        setComboBoxValues(addEditWindow, std::move(coursesInfo), stateTracker);
 
         // Unblock signals after the update
         blockAllComboBoxes(addEditWindow, false);
     });
 
     // filter combo box options based on hours selected
-    QObject::connect(hoursCombo, &QComboBox::currentIndexChanged, addEditWindow, [addEditConn, hoursCombo, addEditWindow](){
+    QObject::connect(hoursCombo, &QComboBox::currentIndexChanged, addEditWindow, [addEditConn, hoursCombo, addEditWindow, stateTracker](){
         // Block signals to prevent recursive calls
         blockAllComboBoxes(addEditWindow, true);
 
-        // set dynamic combo box values
-        int hrs = QString(hoursCombo->currentText()).toInt();
+        // set state
+        (*stateTracker)["hours"] = (int)(QString(hoursCombo->currentText()).toDouble());
+        qDebug() << (*stateTracker)["hours"].toInt();
         QSqlQuery coursesInfo(addEditConn);
-        coursesInfo.prepare("SELECT * FROM courses WHERE hours LIKE :hours");
-        coursesInfo.bindValue(":hours", hrs);
+        coursesInfo.prepare("SELECT * FROM courses WHERE hours LIKE :hours AND (:course_prefix IS NULL OR course_prefix = :course_prefix) AND (:course_num IS NULL OR course_num = :course_num) AND (:semester IS NULL OR semester = :semester) AND (:year IS NULL OR year = :year)");
+        coursesInfo.bindValue(":hours", (*stateTracker)["hours"].toInt());
+
+        // check for other filters
+        if ((*stateTracker)["number"].toInt() != -1){
+            coursesInfo.bindValue(":course_num", (*stateTracker)["number"].toInt());
+        }
+        if ((*stateTracker)["prefix"] != "") {
+            coursesInfo.bindValue(":course_prefix", (*stateTracker)["prefix"].toString());
+        }
+        if ((*stateTracker)["semester"] != ""){
+            coursesInfo.bindValue(":semester", (*stateTracker)["semester"].toString());
+        }
+        if ((*stateTracker)["year"].toInt() != -1){
+            coursesInfo.bindValue(":year", (*stateTracker)["year"].toInt());
+        }
+
         if (!coursesInfo.exec()) {
             qDebug() << "Query failed: " << coursesInfo.lastError().text();
         } else {
             qDebug() << "Query executed successfully.";
         }
-        setComboBoxValues(addEditWindow, std::move(coursesInfo));
+        setComboBoxValues(addEditWindow, std::move(coursesInfo), stateTracker);
 
         // Unblock signals after the update
         blockAllComboBoxes(addEditWindow, false);
@@ -228,13 +294,13 @@ QWidget* createAddEditWindow(QString studID, std::shared_ptr<QMap<std::string, Q
             QString coursesQuery = QString("SELECT crn, course_prefix, course_num FROM courses");
             QSqlQuery coursesInfo = executeQuery(addEditConn, coursesQuery);
             
-            setComboBoxValues(addEditWindow, std::move(coursesInfo));
+            setComboBoxValues(addEditWindow, std::move(coursesInfo), stateTracker);
         } else {
             gradeCombo->setCurrentText((*selectedRow)["grade"]);
         }
 
         // reset stateTracker
-        *stateTracker = {{"crn", -1}, {"prefix", ""}, {"num", -1}, {"year", -1}, {"sem", ""}, {"hrs", -1}};
+        *stateTracker = {{"crn", -1}, {"prefix", ""}, {"number", -1}, {"year", -1}, {"semester", ""}, {"hours", -1}};
      
         // Unblock signals after the update
         blockAllComboBoxes(addEditWindow, false);
