@@ -269,6 +269,26 @@ void setComboBoxValues(QWidget* addEditWindow, QSqlQuery coursesInfo) {
     }
 }
 
+// Function to set initial state of desired combo boxes to no selection
+void setComboBoxesToNone(QWidget* addEditWindow, QComboBox* filter) {
+    // get combo boxes
+    QComboBox* crnCombo = addEditWindow->findChild<QComboBox*>("crnCombo");
+    QComboBox* prefixCombo = addEditWindow->findChild<QComboBox*>("prefixCombo");
+    QComboBox* numberCombo = addEditWindow->findChild<QComboBox*>("numberCombo");
+    QComboBox* yearCombo = addEditWindow->findChild<QComboBox*>("yearCombo");
+    QComboBox* semesterCombo = addEditWindow->findChild<QComboBox*>("semesterCombo");
+    QComboBox* hoursCombo = addEditWindow->findChild<QComboBox*>("hoursCombo");
+
+    QList<QComboBox*> comboBoxes = {crnCombo, prefixCombo, numberCombo, yearCombo, semesterCombo, hoursCombo};
+
+    for (QComboBox* comboBox : comboBoxes) {
+        if (comboBox != filter) {
+            comboBox->setCurrentIndex(-1);
+        }
+    }
+}
+
+// Function to block combo box signals during filter to prevent infinite loop
 void blockAllComboBoxes(QWidget* addEditWindow, bool boxSet) {
     // get combo boxes
     QComboBox* crnCombo = addEditWindow->findChild<QComboBox*>("crnCombo");

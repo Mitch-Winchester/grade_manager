@@ -19,6 +19,7 @@ QWidget* loadUiFile(const QString& filePath);
 QWidget* createAlertWindow(QString message);
 QString calculateGPA(QSqlQuery &gradeData);
 void blockAllComboBoxes(QWidget* addEditWindow, bool boxSet);
+void setComboBoxesToNone(QWidget* addEditWindow, QComboBox* filter);
 QSqlQuery executeQuery(const QSqlDatabase &db, const QString &queryStr);
 QMap<std::string, QString> onSelectionChanged(QSqlQueryModel* model, const QItemSelection &selected, const QItemSelection &deselected);
 void onSaveButtonClicked(const QSqlDatabase &db, QString studID, QWidget* addEditWindow, std::shared_ptr<QMap<std::string, QString>> selectedRow);

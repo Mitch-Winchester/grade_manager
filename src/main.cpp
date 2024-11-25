@@ -74,16 +74,21 @@ QWidget* createAddEditWindow(QString studID, std::shared_ptr<QMap<std::string, Q
         numberCombo->setDisabled(true);
     }
 
+    // variables to keep track of selected options
+    std::shared_ptr<QVariantMap> stateTracker = std::make_shared<QVariantMap>(); 
+    *stateTracker = {{"crn", -1}, {"prefix", ""}, {"num", -1}, {"year", -1}, {"sem", ""}, {"hrs", -1}};
+                                
     // filter combo box options based on crn selected
-    QObject::connect(crnCombo, &QComboBox::currentIndexChanged, addEditWindow, [addEditConn, crnCombo, addEditWindow](){
+    QObject::connect(crnCombo, &QComboBox::currentIndexChanged, addEditWindow, [addEditConn, crnCombo, addEditWindow, stateTracker](){
         // Block signals to prevent recursive calls
         blockAllComboBoxes(addEditWindow, true);
 
-        // set dynamic combo box values
-        int crn = QString(crnCombo->currentText()).toInt();
+        // set tracker
+        (*stateTracker)["crn"] = QString(crnCombo->currentText()).toInt();
+
         QSqlQuery coursesInfo(addEditConn);
         coursesInfo.prepare("SELECT * FROM courses WHERE crn LIKE :crn");
-        coursesInfo.bindValue(":crn", crn);
+        coursesInfo.bindValue(":crn", (*stateTracker)["crn"].toInt());
         if (!coursesInfo.exec()) {
             qDebug() << "Query failed: " << coursesInfo.lastError().text();
         } else {
@@ -96,15 +101,21 @@ QWidget* createAddEditWindow(QString studID, std::shared_ptr<QMap<std::string, Q
     });
 
     // filter combo box options based on course prefix selected
-    QObject::connect(prefixCombo, &QComboBox::currentIndexChanged, addEditWindow, [addEditConn, prefixCombo, addEditWindow](){
+    QObject::connect(prefixCombo, &QComboBox::currentIndexChanged, addEditWindow, [addEditConn, prefixCombo, addEditWindow, stateTracker](){
         // Block signals to prevent recursive calls
         blockAllComboBoxes(addEditWindow, true);
 
-        // set dynamic combo box values
-        QString prefix = QString(prefixCombo->currentText());
+        // set tracker
+        (*stateTracker)["prefix"] = QString(prefixCombo->currentText());
+
         QSqlQuery coursesInfo(addEditConn);
-        coursesInfo.prepare("SELECT * FROM courses WHERE course_prefix LIKE :prefix");
-        coursesInfo.bindValue(":prefix", prefix);
+        coursesInfo.prepare("SELECT * FROM courses WHERE course_prefix LIKE :prefix AND (:course_num IS NULL OR course_num = :course_num)");
+        coursesInfo.bindValue(":prefix", (*stateTracker)["prefix"].toString());
+
+        if ((*stateTracker)["num"].toInt() != -1){
+            coursesInfo.bindValue(":course_num", (*stateTracker)["num"].toInt());
+        }
+
         if (!coursesInfo.exec()) {
             qDebug() << "Query failed: " << coursesInfo.lastError().text();
         } else {
@@ -117,15 +128,21 @@ QWidget* createAddEditWindow(QString studID, std::shared_ptr<QMap<std::string, Q
     });
 
     // filter combo box options based on course number selected
-    QObject::connect(numberCombo, &QComboBox::currentIndexChanged, addEditWindow, [addEditConn, numberCombo, addEditWindow](){
+    QObject::connect(numberCombo, &QComboBox::currentIndexChanged, addEditWindow, [addEditConn, numberCombo, addEditWindow, stateTracker](){
         // Block signals to prevent recursive calls
         blockAllComboBoxes(addEditWindow, true);
 
-        // set dynamic combo box values
-        int num = QString(numberCombo->currentText()).toInt();
+        // set tracker
+        (*stateTracker)["num"] = QString(numberCombo->currentText()).toInt();
+        
         QSqlQuery coursesInfo(addEditConn);
-        coursesInfo.prepare("SELECT * FROM courses WHERE course_num LIKE :num");
-        coursesInfo.bindValue(":num", num);
+        coursesInfo.prepare("SELECT * FROM courses WHERE course_num LIKE :num AND (:course_prefix IS NULL OR course_prefix = :course_prefix)");
+        coursesInfo.bindValue(":num", (*stateTracker)["num"].toInt());
+
+        if ((*stateTracker)["prefix"] != "") {
+            coursesInfo.bindValue(":course_prefix", (*stateTracker)["prefix"].toString());
+        }
+
         if (!coursesInfo.exec()) {
             qDebug() << "Query failed: " << coursesInfo.lastError().text();
         } else {
@@ -202,7 +219,7 @@ QWidget* createAddEditWindow(QString studID, std::shared_ptr<QMap<std::string, Q
 
     //get and connect reset button
     QPushButton* resetButton = addEditWindow->findChild<QPushButton*>("resetButton");
-    QObject::connect(resetButton, &QPushButton::clicked, addEditWindow, [addEditConn, addEditWindow, selectedRow, gradeCombo](){
+    QObject::connect(resetButton, &QPushButton::clicked, addEditWindow, [addEditConn, addEditWindow, selectedRow, gradeCombo, stateTracker](){
         // Block signals to prevent recursive calls
         blockAllComboBoxes(addEditWindow, true);
 
@@ -216,6 +233,9 @@ QWidget* createAddEditWindow(QString studID, std::shared_ptr<QMap<std::string, Q
             gradeCombo->setCurrentText((*selectedRow)["grade"]);
         }
 
+        // reset stateTracker
+        *stateTracker = {{"crn", -1}, {"prefix", ""}, {"num", -1}, {"year", -1}, {"sem", ""}, {"hrs", -1}};
+     
         // Unblock signals after the update
         blockAllComboBoxes(addEditWindow, false);
     });
