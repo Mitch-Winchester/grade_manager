@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>434</width>
-    <height>424</height>
+    <width>380</width>
+    <height>495</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,8 +18,8 @@
     <rect>
      <x>0</x>
      <y>10</y>
-     <width>431</width>
-     <height>411</height>
+     <width>371</width>
+     <height>481</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout">
@@ -103,9 +103,6 @@
       </property>
      </widget>
     </item>
-    <item row="4" column="0" rowspan="4" colspan="5">
-     <widget class="QTableView" name="gradeTable"/>
-    </item>
     <item row="2" column="0" colspan="2">
      <widget class="QLabel" name="label_4">
       <property name="text">
@@ -174,6 +171,9 @@
        <string>Close</string>
       </property>
      </widget>
+    </item>
+    <item row="3" column="0" rowspan="5" colspan="5">
+     <widget class="QTableView" name="gradeTable"/>
     </item>
    </layout>
   </widget>

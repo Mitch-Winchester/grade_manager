@@ -37,33 +37,17 @@ QWidget* createAddEditWindow(QString studID, std::shared_ptr<QMap<std::string, Q
     QWidget* addEditWindow = loadUiFile("../src/gui/addEditWindow.ui");
     QList<QList<QString>> uniqueItems(3);
 
-    // get combo boxes
-    QComboBox* semesterCombo = addEditWindow->findChild<QComboBox*>("semesterCombo");
-    QComboBox* gradeCombo = addEditWindow->findChild<QComboBox*>("gradeCombo");
-    QComboBox* hoursCombo = addEditWindow->findChild<QComboBox*>("hoursCombo");
-    QComboBox* yearCombo = addEditWindow->findChild<QComboBox*>("yearCombo");
+    // get combo boxes    // get combo boxes
     QComboBox* crnCombo = addEditWindow->findChild<QComboBox*>("crnCombo");
     QComboBox* prefixCombo = addEditWindow->findChild<QComboBox*>("prefixCombo");
     QComboBox* numberCombo = addEditWindow->findChild<QComboBox*>("numberCombo");
+    QComboBox* yearCombo = addEditWindow->findChild<QComboBox*>("yearCombo");
+    QComboBox* semesterCombo = addEditWindow->findChild<QComboBox*>("semesterCombo");
+    QComboBox* hoursCombo = addEditWindow->findChild<QComboBox*>("hoursCombo");
+    QComboBox* gradeCombo = addEditWindow->findChild<QComboBox*>("gradeCombo");
 
-    // set static combo box values
-    semesterCombo->addItems({"Fall", "Winter", "Spring", "Summer"});
+    // set grades combo box values
     gradeCombo->addItems({"A", "B", "C", "D", "F", "FN", "W"});
-    hoursCombo->addItems({"1.0", "2.0", "3.0", "4.0"});
-
-    // set year combo box values using current year and
-    // going back 10 years as that is the oldest course work
-    // the university will accept
-    // Get the current time
-    std::time_t now = std::time(nullptr);
-    std::tm* local_time = std::localtime(&now);
-
-    // Extract the year
-    int current_year = local_time->tm_year + 1900;
-
-    for (int i = current_year; i > current_year-10; i--) {
-        yearCombo->addItem(QString::number(i));
-    }
 
     // ensure db connection exists
     QSqlDatabase addEditConn = databaseConnection(QString("addEditConn"));
@@ -71,18 +55,10 @@ QWidget* createAddEditWindow(QString studID, std::shared_ptr<QMap<std::string, Q
     QString coursesQuery = QString("SELECT crn, course_prefix, course_num FROM courses");
     QSqlQuery coursesInfo = executeQuery(addEditConn, coursesQuery);
     
-    setComboBoxValues(crnCombo, prefixCombo, numberCombo, std::move(coursesInfo));
+    setComboBoxValues(addEditWindow, std::move(coursesInfo));
 
-    // set initial state of all combo boxes to no selection
-    if (selectedRow->isEmpty()) {
-        semesterCombo->setCurrentIndex(-1);
-        yearCombo->setCurrentIndex(-1);
-        gradeCombo->setCurrentIndex(-1);
-        hoursCombo->setCurrentIndex(-1);
-        crnCombo->setCurrentIndex(-1);
-        prefixCombo->setCurrentIndex(-1);
-        numberCombo->setCurrentIndex(-1);
-    } else {
+    // set initial state of combo boxes for update
+    if (!selectedRow->isEmpty()) {
         semesterCombo->setCurrentText((*selectedRow)["semester"]);
         semesterCombo->setDisabled(true);
         yearCombo->setCurrentText((*selectedRow)["year"]);
@@ -99,21 +75,151 @@ QWidget* createAddEditWindow(QString studID, std::shared_ptr<QMap<std::string, Q
     }
 
     // filter combo box options based on crn selected
-    QObject::connect(crnCombo, &QComboBox::currentIndexChanged, addEditWindow, [](){
+    QObject::connect(crnCombo, &QComboBox::currentIndexChanged, addEditWindow, [addEditConn, crnCombo, addEditWindow](){
+        // Block signals to prevent recursive calls
+        blockAllComboBoxes(addEditWindow, true);
 
+        // set dynamic combo box values
+        int crn = QString(crnCombo->currentText()).toInt();
+        QSqlQuery coursesInfo(addEditConn);
+        coursesInfo.prepare("SELECT * FROM courses WHERE crn LIKE :crn");
+        coursesInfo.bindValue(":crn", crn);
+        if (!coursesInfo.exec()) {
+            qDebug() << "Query failed: " << coursesInfo.lastError().text();
+        } else {
+            qDebug() << "Query executed successfully.";
+        }
+        setComboBoxValues(addEditWindow, std::move(coursesInfo));
+
+        // Unblock signals after the update
+        blockAllComboBoxes(addEditWindow, false);
     });
 
-
     // filter combo box options based on course prefix selected
+    QObject::connect(prefixCombo, &QComboBox::currentIndexChanged, addEditWindow, [addEditConn, prefixCombo, addEditWindow](){
+        // Block signals to prevent recursive calls
+        blockAllComboBoxes(addEditWindow, true);
+
+        // set dynamic combo box values
+        QString prefix = QString(prefixCombo->currentText());
+        QSqlQuery coursesInfo(addEditConn);
+        coursesInfo.prepare("SELECT * FROM courses WHERE course_prefix LIKE :prefix");
+        coursesInfo.bindValue(":prefix", prefix);
+        if (!coursesInfo.exec()) {
+            qDebug() << "Query failed: " << coursesInfo.lastError().text();
+        } else {
+            qDebug() << "Query executed successfully.";
+        }
+        setComboBoxValues(addEditWindow, std::move(coursesInfo));
+
+        // Unblock signals after the update
+        blockAllComboBoxes(addEditWindow, false);
+    });
 
     // filter combo box options based on course number selected
+    QObject::connect(numberCombo, &QComboBox::currentIndexChanged, addEditWindow, [addEditConn, numberCombo, addEditWindow](){
+        // Block signals to prevent recursive calls
+        blockAllComboBoxes(addEditWindow, true);
+
+        // set dynamic combo box values
+        int num = QString(numberCombo->currentText()).toInt();
+        QSqlQuery coursesInfo(addEditConn);
+        coursesInfo.prepare("SELECT * FROM courses WHERE course_num LIKE :num");
+        coursesInfo.bindValue(":num", num);
+        if (!coursesInfo.exec()) {
+            qDebug() << "Query failed: " << coursesInfo.lastError().text();
+        } else {
+            qDebug() << "Query executed successfully.";
+        }
+        setComboBoxValues(addEditWindow, std::move(coursesInfo));
+
+        // Unblock signals after the update
+        blockAllComboBoxes(addEditWindow, false);
+    });
 
     // filter combo box options based on semester selected
+    QObject::connect(semesterCombo, &QComboBox::currentIndexChanged, addEditWindow, [addEditConn, semesterCombo, addEditWindow](){
+        // Block signals to prevent recursive calls
+        blockAllComboBoxes(addEditWindow, true);
+
+        // set dynamic combo box values
+        QString sem = QString(semesterCombo->currentText());
+        QSqlQuery coursesInfo(addEditConn);
+        coursesInfo.prepare("SELECT * FROM courses WHERE semester LIKE :sem");
+        coursesInfo.bindValue(":sem", sem);
+        if (!coursesInfo.exec()) {
+            qDebug() << "Query failed: " << coursesInfo.lastError().text();
+        } else {
+            qDebug() << "Query executed successfully.";
+        }
+        setComboBoxValues(addEditWindow, std::move(coursesInfo));
+
+        // Unblock signals after the update
+        blockAllComboBoxes(addEditWindow, false);
+    });
 
     // filter combo box options based on year selected
+    QObject::connect(yearCombo, &QComboBox::currentIndexChanged, addEditWindow, [addEditConn, yearCombo, addEditWindow](){
+        // Block signals to prevent recursive calls
+        blockAllComboBoxes(addEditWindow, true);
+
+        // set dynamic combo box values
+        int year = QString(yearCombo->currentText()).toInt();
+        QSqlQuery coursesInfo(addEditConn);
+        coursesInfo.prepare("SELECT * FROM courses WHERE year LIKE :year");
+        coursesInfo.bindValue(":year", year);
+        if (!coursesInfo.exec()) {
+            qDebug() << "Query failed: " << coursesInfo.lastError().text();
+        } else {
+            qDebug() << "Query executed successfully.";
+        }
+        setComboBoxValues(addEditWindow, std::move(coursesInfo));
+
+        // Unblock signals after the update
+        blockAllComboBoxes(addEditWindow, false);
+    });
 
     // filter combo box options based on hours selected
-    
+    QObject::connect(hoursCombo, &QComboBox::currentIndexChanged, addEditWindow, [addEditConn, hoursCombo, addEditWindow](){
+        // Block signals to prevent recursive calls
+        blockAllComboBoxes(addEditWindow, true);
+
+        // set dynamic combo box values
+        int hrs = QString(hoursCombo->currentText()).toInt();
+        QSqlQuery coursesInfo(addEditConn);
+        coursesInfo.prepare("SELECT * FROM courses WHERE hours LIKE :hours");
+        coursesInfo.bindValue(":hours", hrs);
+        if (!coursesInfo.exec()) {
+            qDebug() << "Query failed: " << coursesInfo.lastError().text();
+        } else {
+            qDebug() << "Query executed successfully.";
+        }
+        setComboBoxValues(addEditWindow, std::move(coursesInfo));
+
+        // Unblock signals after the update
+        blockAllComboBoxes(addEditWindow, false);
+    });
+
+    //get and connect reset button
+    QPushButton* resetButton = addEditWindow->findChild<QPushButton*>("resetButton");
+    QObject::connect(resetButton, &QPushButton::clicked, addEditWindow, [addEditConn, addEditWindow, selectedRow, gradeCombo](){
+        // Block signals to prevent recursive calls
+        blockAllComboBoxes(addEditWindow, true);
+
+        if (selectedRow->isEmpty()) {
+            // set dynamic combo box values
+            QString coursesQuery = QString("SELECT crn, course_prefix, course_num FROM courses");
+            QSqlQuery coursesInfo = executeQuery(addEditConn, coursesQuery);
+            
+            setComboBoxValues(addEditWindow, std::move(coursesInfo));
+        } else {
+            gradeCombo->setCurrentText((*selectedRow)["grade"]);
+        }
+
+        // Unblock signals after the update
+        blockAllComboBoxes(addEditWindow, false);
+    });
+
     // get and connect save button
     QPushButton* saveButton = addEditWindow->findChild<QPushButton*>("saveButton");
     QObject::connect(saveButton, &QPushButton::clicked, addEditWindow, 
@@ -180,6 +286,11 @@ QWidget* createGradeWindow(QString studID) {
 
         if (model->lastError().isValid()) {
             qDebug() << "Model error: " << model->lastError().text();
+        }
+
+        QStringList headers = {"CRN", "Prefix", "Number", "Semester", "Year", "Hours", "Grade"};
+        for (int i = 0; i < headers.size(); ++i) {
+            model->setHeaderData(i, Qt::Horizontal, headers.at(i));
         }
 
         // connect model to table
@@ -252,11 +363,17 @@ void onSearchButtonClicked(QWidget* mainWindow) {
     QSqlDatabase studIdConn = databaseConnection(QString("studIdConn"));
     if (studIdConn.isValid() && studID != "") {
         // validate student id
-        QString studentQuery = QString("SELECT * FROM students WHERE student_id LIKE '%%1%'").arg(studID);
-        QSqlQuery studentResults = executeQuery(studIdConn, studentQuery);
+        QSqlQuery studentQuery(studIdConn);
+        studentQuery.prepare("SELECT * FROM students WHERE student_id LIKE :studID");
+        studentQuery.bindValue(":studID", studID);
+        if (!studentQuery.exec()) {
+            qDebug() << "Query failed: " << studentQuery.lastError().text();
+        } else {
+            qDebug() << "Query executed successfully.";
+        }
         studIdConn.close();
 
-        if (studentResults.next()) {
+        if (studentQuery.next()) {
             // Create grade window
             QWidget* gradeWindow = createGradeWindow(studID);
             gradeWindow->show();

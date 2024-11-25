@@ -105,34 +105,57 @@ void processExcelFile(QSqlDatabase &db, const QString &filePath, int crn) {
 
 void importGrades() {
     std::string parentDir = "../all_grades";
+    QWidget* folderAlertWindow = createAlertWindow("");
+    QLabel* messageLabel = folderAlertWindow->findChild<QLabel*>("messageLabel");
+    folderAlertWindow->show();
+    QCoreApplication::processEvents();
 
     // get all subdirectories in the parent directory
     QStringList subDirs = getSubdirectories(parentDir);
     int count = subDirs.length();
     for (const QString &subDirName : subDirs) {
         if (!subDirName.startsWith("Grades")) {
-            qDebug() << "Skipping unrelated folder: " << subDirName;
+            QString errMessage = "Skipping unrelated folder: " + subDirName;
+            qDebug() << errMessage;
+            messageLabel->setText(errMessage);
+            QCoreApplication::processEvents();
         }
 
         QStringList folderParts = subDirName.split(' ');
         if (folderParts.size() != 3) {
-            qDebug() << "Skipping folder with unexpected format: " << subDirName;
+            QString errMessage = "Skipping folder with unexpected format: " + subDirName;
+            qDebug() << errMessage;
+            messageLabel->setText(errMessage);
+            QCoreApplication::processEvents();
         }
 
         QString year = folderParts[1];
         QString semester = folderParts[2];
 
-        qDebug() << "Processing folder: " << subDirName;
+
+        QString folderMessage = "Processing folder: " + subDirName;
+        qDebug() << folderMessage;
+        QLabel* foldAlertLab = folderAlertWindow->findChild<QLabel*>("alertLabel");
+        foldAlertLab->setText(folderMessage);
+        QCoreApplication::processEvents();
+
         std::string subDirPath = parentDir + "/" + QString(subDirName).toStdString();
         QStringList files = getFilesInDirectory(subDirPath);
 
         for (const QString &fileName : files) {
+            QString fileMessage = "Processing file: " + fileName;
+            messageLabel->setText(fileMessage);
+            QCoreApplication::processEvents();
+
             QFileInfo fileInfo(fileName);
             QString baseName = fileInfo.completeBaseName();
             QStringList fileParts = baseName.split(' ');
 
             if (fileParts.size() != 4) {
-                qDebug() << "Skipping file with unexpected format: " << baseName;
+                QString errMessage = "Skipping file with unexpected format: " + baseName;
+                qDebug() << errMessage;
+                messageLabel->setText(errMessage);
+                QCoreApplication::processEvents();
                 continue;
             }
 
@@ -151,15 +174,18 @@ void importGrades() {
                 processExcelFile(importConn, QString::fromStdString(subDirPath) + "/" + fileName, crn);
                 importConn.close();
             } catch (std::exception& crnEx) {
-                QString message = "Failed CRN query: " + QString(crnEx.what());
-                qDebug() << message;
-                QWidget* alertWindow = createAlertWindow(message);
-                alertWindow->show();
+                QString errMessage = "Failed CRN query: " + QString(crnEx.what());
+                qDebug() << errMessage;
+                messageLabel->setText(errMessage);
+                QCoreApplication::processEvents();
             }
 
         }
         count--;
     }
+
+    folderAlertWindow->close();
+    
     if (count == 0 && subDirs.length() > 0) {
         QString message = "Import successful!";
         qDebug() << message;

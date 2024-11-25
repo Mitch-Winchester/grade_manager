@@ -3,6 +3,7 @@
 #include <QFile>
 #include <QUiLoader>
 #include <QSettings>
+#include <QSqlRecord>
 
 // Function to load .ui files
 QWidget* loadUiFile(const QString& filePath) {
@@ -179,21 +180,109 @@ void onDeleteButtonClicked(const QSqlDatabase &db, QString studID, std::shared_p
     }
 }
 
-void setComboBoxValues(QComboBox* crnCombo, QComboBox* prefixCombo, QComboBox* numberCombo, QSqlQuery coursesInfo) {
-    QList<QList<QString>> uniqueItems(3);
+void setComboBoxValues(QWidget* addEditWindow, QSqlQuery coursesInfo) {
+    int columns = coursesInfo.record().count();
+    QList<QList<QString>> uniqueItems(columns);
 
-    while (coursesInfo.next()) {
-        if (!uniqueItems[0].contains(coursesInfo.value("crn").toString())) {
-            uniqueItems[0].append(coursesInfo.value("crn").toString());
-            crnCombo->addItem(coursesInfo.value("crn").toString());
+    // get combo boxes
+    QComboBox* crnCombo = addEditWindow->findChild<QComboBox*>("crnCombo");
+    QComboBox* prefixCombo = addEditWindow->findChild<QComboBox*>("prefixCombo");
+    QComboBox* numberCombo = addEditWindow->findChild<QComboBox*>("numberCombo");
+    QComboBox* yearCombo = addEditWindow->findChild<QComboBox*>("yearCombo");
+    QComboBox* semesterCombo = addEditWindow->findChild<QComboBox*>("semesterCombo");
+    QComboBox* hoursCombo = addEditWindow->findChild<QComboBox*>("hoursCombo");
+
+    if (columns == 3) {
+        QComboBox* gradeCombo = addEditWindow->findChild<QComboBox*>("gradeCombo");
+        // set year combo box values using current year and
+        // going back 10 years as that is the oldest course work
+        // the university will accept
+        // Get the current time
+        std::time_t now = std::time(nullptr);
+        std::tm* local_time = std::localtime(&now);
+
+        // Extract the year
+        int current_year = local_time->tm_year + 1900;
+
+        for (int i = current_year; i > current_year-10; i--) {
+            yearCombo->addItem(QString::number(i));
         }
-        if (!uniqueItems[1].contains(coursesInfo.value("course_prefix").toString())) {
-            uniqueItems[1].append(coursesInfo.value("course_prefix").toString());
-            prefixCombo->addItem(coursesInfo.value("course_prefix").toString());
+        semesterCombo->addItems({"Fall", "Winter", "Spring", "Summer"});
+        hoursCombo->addItems({"1.0", "2.0", "3.0", "4.0"});
+
+        while (coursesInfo.next()) {
+            if (!uniqueItems[0].contains(coursesInfo.value("crn").toString())) {
+                uniqueItems[0].append(coursesInfo.value("crn").toString());
+                crnCombo->addItem(coursesInfo.value("crn").toString());
+            }
+            if (!uniqueItems[1].contains(coursesInfo.value("course_prefix").toString())) {
+                uniqueItems[1].append(coursesInfo.value("course_prefix").toString());
+                prefixCombo->addItem(coursesInfo.value("course_prefix").toString());
+            }
+            if (!uniqueItems[2].contains(coursesInfo.value("course_num").toString())) {
+                uniqueItems[2].append(coursesInfo.value("course_num").toString());
+                numberCombo->addItem(coursesInfo.value("course_num").toString());
+            }
         }
-        if (!uniqueItems[2].contains(coursesInfo.value("course_num").toString())) {
-            uniqueItems[2].append(coursesInfo.value("course_num").toString());
-            numberCombo->addItem(coursesInfo.value("course_num").toString());
+        // set initial state of all combo boxes to no selection
+        semesterCombo->setCurrentIndex(-1);
+        yearCombo->setCurrentIndex(-1);
+        gradeCombo->setCurrentIndex(-1);
+        hoursCombo->setCurrentIndex(-1);
+        crnCombo->setCurrentIndex(-1);
+        prefixCombo->setCurrentIndex(-1);
+        numberCombo->setCurrentIndex(-1);
+    } else {
+        // clear combo boxes
+        crnCombo->clear();
+        prefixCombo->clear();
+        numberCombo->clear();
+        yearCombo->clear();
+        semesterCombo->clear();
+        hoursCombo->clear();
+        while (coursesInfo.next()) {
+            if (!uniqueItems[0].contains(coursesInfo.value("crn").toString())) {
+                uniqueItems[0].append(coursesInfo.value("crn").toString());
+                crnCombo->addItem(coursesInfo.value("crn").toString());
+            }
+            if (!uniqueItems[1].contains(coursesInfo.value("course_prefix").toString())) {
+                uniqueItems[1].append(coursesInfo.value("course_prefix").toString());
+                prefixCombo->addItem(coursesInfo.value("course_prefix").toString());
+            }
+            if (!uniqueItems[2].contains(coursesInfo.value("course_num").toString())) {
+                uniqueItems[2].append(coursesInfo.value("course_num").toString());
+                numberCombo->addItem(coursesInfo.value("course_num").toString());
+            }
+            if (!uniqueItems[3].contains(coursesInfo.value("year").toString())) {
+                uniqueItems[3].append(coursesInfo.value("year").toString());
+                yearCombo->addItem(coursesInfo.value("year").toString());
+            }
+            if (!uniqueItems[4].contains(coursesInfo.value("semester").toString())) {
+                uniqueItems[4].append(coursesInfo.value("semester").toString());
+                semesterCombo->addItem(coursesInfo.value("semester").toString());
+            }
+            if (!uniqueItems[5].contains(coursesInfo.value("hours").toString())) {
+                uniqueItems[5].append(coursesInfo.value("hours").toString());
+                hoursCombo->addItem(coursesInfo.value("hours").toString());
+            }
+        }
+    }
+}
+
+void blockAllComboBoxes(QWidget* addEditWindow, bool boxSet) {
+    // get combo boxes
+    QComboBox* crnCombo = addEditWindow->findChild<QComboBox*>("crnCombo");
+    QComboBox* prefixCombo = addEditWindow->findChild<QComboBox*>("prefixCombo");
+    QComboBox* numberCombo = addEditWindow->findChild<QComboBox*>("numberCombo");
+    QComboBox* yearCombo = addEditWindow->findChild<QComboBox*>("yearCombo");
+    QComboBox* semesterCombo = addEditWindow->findChild<QComboBox*>("semesterCombo");
+    QComboBox* hoursCombo = addEditWindow->findChild<QComboBox*>("hoursCombo");
+    
+    QList<QComboBox*> comboBoxes = {crnCombo, prefixCombo, numberCombo, yearCombo, semesterCombo, hoursCombo};
+
+    for (QComboBox* comboBox : comboBoxes) {
+        if (comboBox) {
+            comboBox->blockSignals(boxSet);
         }
     }
 }

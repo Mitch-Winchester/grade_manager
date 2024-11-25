@@ -7,8 +7,10 @@ void printTranscript(QString studID, QString fullName, QString cumGpa) {
     int lineShift = 5;
     // query grades using student id
     QSqlDatabase transcriptConn = databaseConnection(QString("transcriptConn"));
-    QString gradeQuery = QString("SELECT courses.crn, course_prefix, course_num, semester, year, hours, grade FROM courses INNER JOIN grades on courses.crn = grades.crn WHERE grades.student_id LIKE '%%1%'").arg(studID);
-    QSqlQuery gradeData = executeQuery(transcriptConn, gradeQuery);
+    QSqlQuery gradeData(transcriptConn);
+    gradeData.prepare("SELECT courses.crn, course_prefix, course_num, semester, year, hours, grade FROM courses INNER JOIN grades on courses.crn = grades.crn WHERE grades.student_id LIKE :studID");
+    gradeData.bindValue(":studID", studID);
+    gradeData.exec();
 
     // setup pdf writer
     QString filePath = QString("../transcripts/%1_transcript.pdf").arg(studID);
