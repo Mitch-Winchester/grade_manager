@@ -517,6 +517,13 @@ int main(int argc, char *argv[]) {
     QObject::connect(searchButton, &QPushButton::clicked, mainWindow, [mainWindow](){
         onSearchButtonClicked(mainWindow);
     });
+    // connect search button with enter key, but 
+    // only after the user has put a search in the text box
+    QLineEdit* inputField = mainWindow->findChild<QLineEdit*>("idInput");
+    if (inputField && searchButton) {
+        QObject::connect(inputField, &QLineEdit::returnPressed, searchButton, &QPushButton::click);
+    }
+
 
     // get and connect import button
     QPushButton* importButton = mainWindow->findChild<QPushButton*>("importButton");
