@@ -202,8 +202,15 @@ QWidget* createAddEditWindow(QString studID, std::shared_ptr<QMap<std::string, Q
         } else {
             qDebug() << "Query executed successfully.";
         }
-        setComboBoxValues(addEditConn, addEditWindow, std::move(coursesInfo), stateTracker);
-
+        // error message if query empty
+        if (!coursesInfo.next()) {
+            QWidget* errMessage = createAlertWindow("No courses match your selection");
+            errMessage->show();
+            *stateTracker = {{"crn", -1}, {"prefix", ""}, {"number", -1}, {"year", -1}, {"semester", ""}, {"hours", -1}};
+            setComboBoxValues(addEditConn, addEditWindow, std::move(coursesInfo), stateTracker);
+        } else {
+            setComboBoxValues(addEditConn, addEditWindow, std::move(coursesInfo), stateTracker);
+        }
         // Unblock signals after the update
         blockAllComboBoxes(addEditWindow, false);
     });
@@ -239,8 +246,15 @@ QWidget* createAddEditWindow(QString studID, std::shared_ptr<QMap<std::string, Q
         } else {
             qDebug() << "Query executed successfully.";
         }
-        setComboBoxValues(addEditConn, addEditWindow, std::move(coursesInfo), stateTracker);
-
+        // error message if query empty
+        if (!coursesInfo.next()) {
+            QWidget* errMessage = createAlertWindow("No courses match your selection");
+            errMessage->show();
+            *stateTracker = {{"crn", -1}, {"prefix", ""}, {"number", -1}, {"year", -1}, {"semester", ""}, {"hours", -1}};
+            setComboBoxValues(addEditConn, addEditWindow, std::move(coursesInfo), stateTracker);
+        } else {
+            setComboBoxValues(addEditConn, addEditWindow, std::move(coursesInfo), stateTracker);
+        }
         // Unblock signals after the update
         blockAllComboBoxes(addEditWindow, false);
     });
@@ -450,32 +464,45 @@ void onSearchButtonClicked(QWidget* mainWindow) {
     QLineEdit* inputBox = mainWindow->findChild<QLineEdit*>("idInput");
     QString studID = inputBox->text();
 
+    // confirm user input contains only integers
+    bool isInteger = false;
+    studID.toInt(&isInteger);
+
+    if (isInteger) {
     // ensure db connection exists
-    QSqlDatabase studIdConn = databaseConnection(QString("studIdConn"));
-    if (studIdConn.isValid() && studID != "") {
-        // validate student id
-        QSqlQuery studentQuery(studIdConn);
-        studentQuery.prepare("SELECT * FROM students WHERE student_id LIKE :studID");
-        studentQuery.bindValue(":studID", studID);
-        if (!studentQuery.exec()) {
-            qDebug() << "Query failed: " << studentQuery.lastError().text();
-        } else {
-            qDebug() << "Query executed successfully.";
-        }
-        studIdConn.close();
+        QSqlDatabase studIdConn = databaseConnection(QString("studIdConn"));
+        if (studIdConn.isValid() && studID != "") {
+            // validate student id
+            QSqlQuery studentQuery(studIdConn);
+            studentQuery.prepare("SELECT * FROM students WHERE student_id LIKE :studID");
+            studentQuery.bindValue(":studID", studID);
+            if (!studentQuery.exec()) {
+                qDebug() << "Query failed: " << studentQuery.lastError().text();
+            } else {
+                qDebug() << "Query executed successfully.";
+            }
+            studIdConn.close();
 
-        if (studentQuery.next()) {
-            // Create grade window
-            QWidget* gradeWindow = createGradeWindow(studID);
-            gradeWindow->show();
-        } else {
-            QString message = "Invalid student id!";
-            qDebug() << message;
-            QWidget* alertWindow = createAlertWindow(message);
-            alertWindow->show();
-        }
+            if (studentQuery.next()) {
+                // Create grade window
+                QWidget* gradeWindow = createGradeWindow(studID);
+                gradeWindow->show();
+            } else {
+                QString message = "Invalid student id!";
+                qDebug() << message;
+                QWidget* alertWindow = createAlertWindow(message);
+                alertWindow->show();
+            }
 
+        }
+    } else {
+        QString message = "Please enter a valid student id containing only numbers!";
+        qDebug() << message;
+        QWidget* alertWindow = createAlertWindow(message);
+        alertWindow->show();
     }
+
+
     inputBox->setText("");
 }
 
