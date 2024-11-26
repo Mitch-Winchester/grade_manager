@@ -39,7 +39,7 @@ QWidget* createAddEditWindow(QString studID, std::shared_ptr<QMap<std::string, Q
     std::shared_ptr<QVariantMap> stateTracker = std::make_shared<QVariantMap>(); 
     *stateTracker = {{"crn", -1}, {"prefix", ""}, {"number", -1}, {"year", -1}, {"semester", ""}, {"hours", -1}};
 
-    // get combo boxes    // get combo boxes
+    // get combo boxes
     QComboBox* crnCombo = addEditWindow->findChild<QComboBox*>("crnCombo");
     QComboBox* prefixCombo = addEditWindow->findChild<QComboBox*>("prefixCombo");
     QComboBox* numberCombo = addEditWindow->findChild<QComboBox*>("numberCombo");
@@ -53,12 +53,11 @@ QWidget* createAddEditWindow(QString studID, std::shared_ptr<QMap<std::string, Q
 
     // ensure db connection exists
     QSqlDatabase addEditConn = databaseConnection(QString("addEditConn"));
-    // set dynamic combo box values
-    QString coursesQuery = QString("SELECT crn, course_prefix, course_num FROM courses");
-    QSqlQuery coursesInfo = executeQuery(addEditConn, coursesQuery);
     
-    setComboBoxValues(addEditWindow, std::move(coursesInfo), stateTracker);
-
+    // set initial combo box values
+    QSqlQuery coursesInfo;
+    setComboBoxValues(addEditConn, addEditWindow, std::move(coursesInfo), stateTracker);
+    
     // set initial state of combo boxes for update
     if (!selectedRow->isEmpty()) {
         semesterCombo->setCurrentText((*selectedRow)["semester"]);
@@ -92,7 +91,7 @@ QWidget* createAddEditWindow(QString studID, std::shared_ptr<QMap<std::string, Q
         } else {
             qDebug() << "Query executed successfully.";
         }
-        setComboBoxValues(addEditWindow, std::move(coursesInfo), stateTracker);
+        setComboBoxValues(addEditConn, addEditWindow, std::move(coursesInfo), stateTracker);
 
         // Unblock signals after the update
         blockAllComboBoxes(addEditWindow, false);
@@ -107,7 +106,7 @@ QWidget* createAddEditWindow(QString studID, std::shared_ptr<QMap<std::string, Q
         (*stateTracker)["prefix"] = QString(prefixCombo->currentText());
 
         QSqlQuery coursesInfo(addEditConn);
-        coursesInfo.prepare("SELECT * FROM courses WHERE course_prefix LIKE :prefix AND (:course_num IS NULL OR course_num = :course_num) AND (:semester IS NULL OR course_num = :semester) AND (:year IS NULL OR year = :year) AND (:hours IS NULL OR hours = :hours)");
+        coursesInfo.prepare("SELECT * FROM courses WHERE course_prefix LIKE :prefix AND (:course_num IS NULL OR course_num = :course_num) AND (:semester IS NULL OR semester = :semester) AND (:year IS NULL OR year = :year) AND (:hours IS NULL OR hours = :hours)");
         coursesInfo.bindValue(":prefix", (*stateTracker)["prefix"].toString());
 
         // check for other filters
@@ -123,13 +122,13 @@ QWidget* createAddEditWindow(QString studID, std::shared_ptr<QMap<std::string, Q
         if ((*stateTracker)["hours"].toInt() != -1){
             coursesInfo.bindValue(":hours", (*stateTracker)["hours"].toInt());
         }
-
+        
         if (!coursesInfo.exec()) {
             qDebug() << "Query failed: " << coursesInfo.lastError().text();
         } else {
             qDebug() << "Query executed successfully.";
         }
-        setComboBoxValues(addEditWindow, std::move(coursesInfo), stateTracker);
+        setComboBoxValues(addEditConn, addEditWindow, std::move(coursesInfo), stateTracker);
 
         // Unblock signals after the update
         blockAllComboBoxes(addEditWindow, false);
@@ -144,7 +143,7 @@ QWidget* createAddEditWindow(QString studID, std::shared_ptr<QMap<std::string, Q
         (*stateTracker)["number"] = QString(numberCombo->currentText()).toInt();
         
         QSqlQuery coursesInfo(addEditConn);
-        coursesInfo.prepare("SELECT * FROM courses WHERE course_num LIKE :num AND (:course_prefix IS NULL OR course_prefix = :course_prefix) AND (:semester IS NULL OR course_num = :semester) AND (:year IS NULL OR year = :year) AND (:hours IS NULL OR hours = :hours)");
+        coursesInfo.prepare("SELECT * FROM courses WHERE course_num LIKE :num AND (:course_prefix IS NULL OR course_prefix = :course_prefix) AND (:semester IS NULL OR semester = :semester) AND (:year IS NULL OR year = :year) AND (:hours IS NULL OR hours = :hours)");
         coursesInfo.bindValue(":num", (*stateTracker)["number"].toInt());
 
         // check for other filters
@@ -166,7 +165,7 @@ QWidget* createAddEditWindow(QString studID, std::shared_ptr<QMap<std::string, Q
         } else {
             qDebug() << "Query executed successfully.";
         }
-        setComboBoxValues(addEditWindow, std::move(coursesInfo), stateTracker);
+        setComboBoxValues(addEditConn, addEditWindow, std::move(coursesInfo), stateTracker);
 
         // Unblock signals after the update
         blockAllComboBoxes(addEditWindow, false);
@@ -203,7 +202,7 @@ QWidget* createAddEditWindow(QString studID, std::shared_ptr<QMap<std::string, Q
         } else {
             qDebug() << "Query executed successfully.";
         }
-        setComboBoxValues(addEditWindow, std::move(coursesInfo), stateTracker);
+        setComboBoxValues(addEditConn, addEditWindow, std::move(coursesInfo), stateTracker);
 
         // Unblock signals after the update
         blockAllComboBoxes(addEditWindow, false);
@@ -240,7 +239,7 @@ QWidget* createAddEditWindow(QString studID, std::shared_ptr<QMap<std::string, Q
         } else {
             qDebug() << "Query executed successfully.";
         }
-        setComboBoxValues(addEditWindow, std::move(coursesInfo), stateTracker);
+        setComboBoxValues(addEditConn, addEditWindow, std::move(coursesInfo), stateTracker);
 
         // Unblock signals after the update
         blockAllComboBoxes(addEditWindow, false);
@@ -253,7 +252,7 @@ QWidget* createAddEditWindow(QString studID, std::shared_ptr<QMap<std::string, Q
 
         // set state
         (*stateTracker)["hours"] = (int)(QString(hoursCombo->currentText()).toDouble());
-        qDebug() << (*stateTracker)["hours"].toInt();
+
         QSqlQuery coursesInfo(addEditConn);
         coursesInfo.prepare("SELECT * FROM courses WHERE hours LIKE :hours AND (:course_prefix IS NULL OR course_prefix = :course_prefix) AND (:course_num IS NULL OR course_num = :course_num) AND (:semester IS NULL OR semester = :semester) AND (:year IS NULL OR year = :year)");
         coursesInfo.bindValue(":hours", (*stateTracker)["hours"].toInt());
@@ -277,7 +276,16 @@ QWidget* createAddEditWindow(QString studID, std::shared_ptr<QMap<std::string, Q
         } else {
             qDebug() << "Query executed successfully.";
         }
-        setComboBoxValues(addEditWindow, std::move(coursesInfo), stateTracker);
+
+        // error message if query empty
+        if (!coursesInfo.next()) {
+            QWidget* errMessage = createAlertWindow("No courses match your selection");
+            errMessage->show();
+            *stateTracker = {{"crn", -1}, {"prefix", ""}, {"number", -1}, {"year", -1}, {"semester", ""}, {"hours", -1}};
+            setComboBoxValues(addEditConn, addEditWindow, std::move(coursesInfo), stateTracker);
+        } else {
+            setComboBoxValues(addEditConn, addEditWindow, std::move(coursesInfo), stateTracker);
+        }
 
         // Unblock signals after the update
         blockAllComboBoxes(addEditWindow, false);
@@ -290,11 +298,8 @@ QWidget* createAddEditWindow(QString studID, std::shared_ptr<QMap<std::string, Q
         blockAllComboBoxes(addEditWindow, true);
 
         if (selectedRow->isEmpty()) {
-            // set dynamic combo box values
-            QString coursesQuery = QString("SELECT crn, course_prefix, course_num FROM courses");
-            QSqlQuery coursesInfo = executeQuery(addEditConn, coursesQuery);
-            
-            setComboBoxValues(addEditWindow, std::move(coursesInfo), stateTracker);
+            QSqlQuery coursesInfo;
+            setComboBoxValues(addEditConn, addEditWindow, std::move(coursesInfo), stateTracker);
         } else {
             gradeCombo->setCurrentText((*selectedRow)["grade"]);
         }

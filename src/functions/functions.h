@@ -27,7 +27,7 @@ QSqlQuery executeQuery(const QSqlDatabase &db, const QString &queryStr);
 QMap<std::string, QString> onSelectionChanged(QSqlQueryModel* model, const QItemSelection &selected, const QItemSelection &deselected);
 void onSaveButtonClicked(const QSqlDatabase &db, QString studID, QWidget* addEditWindow, std::shared_ptr<QMap<std::string, QString>> selectedRow);
 void onDeleteButtonClicked(const QSqlDatabase &db, QString studID, std::shared_ptr<QMap<std::string, QString>> selectedRow);
-void setComboBoxValues(QWidget* addEditWindow, QSqlQuery coursesInfo, std::shared_ptr<QVariantMap> stateTracker);
+void setComboBoxValues(QSqlDatabase dbConn, QWidget* addEditWindow, QSqlQuery coursesInfo, std::shared_ptr<QVariantMap> stateTracker);
 void importGrades();
 void printTranscript(QString studID, QString , QString cumGpa);
 

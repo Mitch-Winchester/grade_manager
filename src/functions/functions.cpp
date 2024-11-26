@@ -112,6 +112,7 @@ QSqlQuery executeQuery(const QSqlDatabase &db, const QString &queryStr) {
     return query;
 }
 
+// Function to handle selection of row from grade table
 QMap<std::string, QString> onSelectionChanged(QSqlQueryModel* model, const QItemSelection &selected, const QItemSelection &deselected) {
     std::array keys = {"crn", "course_prefix", "course_num", "semester", "year", "hours", "grade"};
     QMap<std::string, QString> selectedRow;
@@ -134,6 +135,7 @@ QMap<std::string, QString> onSelectionChanged(QSqlQueryModel* model, const QItem
     return selectedRow;
 }
 
+// Function to handle save button from grade entry form
 void onSaveButtonClicked(const QSqlDatabase &db, QString studID, QWidget* addEditWindow, std::shared_ptr<QMap<std::string, QString>> selectedRow) {
     // get combo boxes
     QComboBox* gradeCombo = addEditWindow->findChild<QComboBox*>("gradeCombo");
@@ -166,6 +168,7 @@ void onSaveButtonClicked(const QSqlDatabase &db, QString studID, QWidget* addEdi
     qDebug() << " ID: " << studID << "CRN: " << crn << "Grade: " << grade;
 }
 
+// Function to handle delete button from grade display window
 void onDeleteButtonClicked(const QSqlDatabase &db, QString studID, std::shared_ptr<QMap<std::string, QString>> selectedRow) {
     QSqlQuery deleteQuery(db);
 
@@ -180,9 +183,16 @@ void onDeleteButtonClicked(const QSqlDatabase &db, QString studID, std::shared_p
     }
 }
 
-void setComboBoxValues(QWidget* addEditWindow, QSqlQuery coursesInfo, std::shared_ptr<QVariantMap> stateTracker) {
-    int columns = coursesInfo.record().count();
-    QList<QList<QString>> uniqueItems(columns);
+// Function to handle grade entry combo box values
+void setComboBoxValues(QSqlDatabase dbConn, QWidget* addEditWindow, QSqlQuery coursesInfo, std::shared_ptr<QVariantMap> stateTracker) {
+    int length;
+    if (coursesInfo.next()) {
+        coursesInfo.previous();
+        length = coursesInfo.record().count();
+    } else {
+        length = 3;
+    }
+    QList<QList<QString>> uniqueItems(length);
 
     // get combo boxes
     QComboBox* crnCombo = addEditWindow->findChild<QComboBox*>("crnCombo");
@@ -200,7 +210,10 @@ void setComboBoxValues(QWidget* addEditWindow, QSqlQuery coursesInfo, std::share
     semesterCombo->clear();
     hoursCombo->clear();
 
-    if (columns == 3) {
+    if (length == 3) {
+        QString coursesQuery = QString("SELECT crn, course_prefix, course_num FROM courses");
+        QSqlQuery coursesInfo = executeQuery(dbConn, coursesQuery);
+        
         QComboBox* gradeCombo = addEditWindow->findChild<QComboBox*>("gradeCombo");
         // set year combo box values using current year and
         // going back 10 years as that is the oldest course work

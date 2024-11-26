@@ -170,7 +170,7 @@ void importGrades() {
                 int crn = getCRN(importConn, coursePrefix, courseNum, year, semester);
                 if (crn == -1) {
                     importConn.close();
-                    throw "CRN not found!";
+                    throw std::runtime_error("CRN not found!");
                 }
 
                 processExcelFile(importConn, QString::fromStdString(subDirPath) + "/" + fileName, crn);
