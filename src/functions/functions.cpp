@@ -94,24 +94,6 @@ QSqlDatabase databaseConnection(QString connectionName) {
     return db;
 }
 
-// Function to execute query
-QSqlQuery executeQuery(const QSqlDatabase &db, const QString &queryStr) {
-    if (!db.isOpen()) {
-        qDebug() << "Database is not open!";
-        qWarning() << "Database is not open!";
-        return QSqlQuery();
-    }
-
-    QSqlQuery query(db);
-    if (!query.exec(queryStr)) {
-        qDebug() << "Query failed: " << query.lastError().text();
-        qWarning() << "Database is not open!";
-        return QSqlQuery();
-    }
-
-    return query;
-}
-
 // Function to handle selection of row from grade table
 QMap<std::string, QString> onSelectionChanged(QSqlQueryModel* model, const QItemSelection &selected, const QItemSelection &deselected) {
     std::array keys = {"crn", "course_prefix", "course_num", "semester", "year", "hours", "grade"};
@@ -211,8 +193,9 @@ void setComboBoxValues(QSqlDatabase dbConn, QWidget* addEditWindow, QSqlQuery co
     hoursCombo->clear();
 
     if (length == 3) {
-        QString coursesQuery = QString("SELECT crn, course_prefix, course_num FROM courses");
-        QSqlQuery coursesInfo = executeQuery(dbConn, coursesQuery);
+        QSqlQuery coursesInfo(dbConn);
+        coursesInfo.prepare("SELECT crn, course_prefix, course_num FROM courses");
+        coursesInfo.exec();
         
         QComboBox* gradeCombo = addEditWindow->findChild<QComboBox*>("gradeCombo");
         // set year combo box values using current year and

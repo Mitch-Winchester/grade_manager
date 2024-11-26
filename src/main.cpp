@@ -361,8 +361,15 @@ QWidget* createGradeWindow(QString studID) {
     // ensure db connection exists
     QSqlDatabase gradeTableConn = databaseConnection(QString("gradeTableConn"));
     // get student name
-    QString studentQuery = QString("SELECT * FROM students WHERE student_id LIKE '%%1%'").arg(studID);
-    QSqlQuery nameResults = executeQuery(gradeTableConn, studentQuery);
+    QSqlQuery nameResults(gradeTableConn);
+    nameResults.prepare("SELECT * FROM students WHERE student_id = :student_id");
+    nameResults.bindValue(":student_id", studID);
+    nameResults.exec();
+    if (!nameResults.exec()) {
+        qDebug() << "Query failed: " << nameResults.lastError().text();
+    } else {
+        qDebug() << "Query executed successfully.";
+    }
     QString fullName;
 
     while (nameResults.next()) {
@@ -379,8 +386,15 @@ QWidget* createGradeWindow(QString studID) {
     // lambda expression to refresh table
     auto refreshGradeTable = [model, gradeTable, studID, gradeTableConn, gradeWindow]() {
         // query grades using student id
-        QString gradeQuery = QString("SELECT courses.crn, course_prefix, course_num, semester, year, hours, grade FROM courses INNER JOIN grades on courses.crn = grades.crn WHERE grades.student_id LIKE '%%1%'").arg(studID);
-        QSqlQuery gradeData = executeQuery(gradeTableConn, gradeQuery);
+        QSqlQuery gradeData(gradeTableConn);
+        gradeData.prepare("SELECT courses.crn, course_prefix, course_num, semester, year, hours, grade FROM courses INNER JOIN grades on courses.crn = grades.crn WHERE grades.student_id = :student_id");
+        gradeData.bindValue(":student_id", studID);
+        gradeData.exec();
+        if (!gradeData.exec()) {
+            qDebug() << "Query failed: " << gradeData.lastError().text();
+        } else {
+            qDebug() << "Query executed successfully.";
+        }
 
         // GPA calculation
         QString calculatedGpa = calculateGPA(gradeData);
